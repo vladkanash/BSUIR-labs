@@ -5,45 +5,45 @@
 #define N 1200
 #define MAX_RAND 500
 
-int** alloc_matrix(unsigned size) {
-    int** ptr = NULL;
+float** alloc_matrix(unsigned size) {
+    float** ptr = NULL;
 
-    ptr = (int**)malloc(sizeof(int*) * size);
+    ptr = (float**)malloc(sizeof(float*) * size);
 
     for (int i = 0; i < size; i++) {
-        ptr[i] = (int*)malloc(sizeof(int) * size);
+        ptr[i] = (float*)malloc(sizeof(float) * size);
     }
 
     return ptr;
 }
 
-void rand_matrix(int** ptr, unsigned size) {
+void rand_matrix(float** ptr, unsigned size) {
     for (int i = 0; i < size; i++) {
        for (int j = 0; j < size; j++) {
-           ptr[i][j] = rand() % (MAX_RAND + 1);
+           ptr[i][j] = (rand() % (MAX_RAND + 1)) / (float)(rand() % MAX_RAND + 1);
        }
     }
 }
 
-void print_matrix(int** ptr, unsigned size) {
+void print_matrix(float** ptr, unsigned size) {
     for (int i = 0; i < size; i++) {
         for (int j = 0; j < size; j++) {
-            printf("%4d ", ptr[i][j]);
+            printf("%4.2f ", ptr[i][j]);
         }
         printf("\n");
     }
     printf("\n");
 }
 
-void clean_matrix(int** ptr, unsigned size) {
+void clean_matrix(float** ptr, unsigned size) {
     for (int i = 0; i < size; i++) {
         free(ptr[i]);
     }
     free(ptr);
 }
 
-int** multiply_matrix(int** ptr_1, int** ptr_2, unsigned size) {
-    int** result = alloc_matrix(size);
+float** multiply_matrix(float** ptr_1, float** ptr_2, unsigned size) {
+    float** result = alloc_matrix(size);
 
     for (int i = 0; i < size; i++) {
         for (int j = 0; j < size; j++) {
@@ -62,27 +62,27 @@ long time_diff(clock_t t1, clock_t t2) {
     return elapsed;
 }
 
-int main() {
+float main() {
     srand((unsigned int) time(NULL));
     clock_t t1, t2;
 
-    int** mx1 = alloc_matrix(N);
-    int** mx2 = alloc_matrix(N);
+    float** mx1 = alloc_matrix(N);
+    float** mx2 = alloc_matrix(N);
 
     rand_matrix(mx1, N);
     rand_matrix(mx2, N);
 
     t1 = clock();
-    int** mx_res = multiply_matrix(mx1, mx2, N);
+    float** mx_res = multiply_matrix(mx1, mx2, N);
     t2 = clock();
 
 //    print_matrix(mx1, N);
 //    print_matrix(mx2, N);
-
+//
 //    printf("===================RESULT==========================\n");
 //    print_matrix(mx_res, N);
 
-    printf("elapsed: %ld ms\n", time_diff(t1, t2));
+    printf("Time elapsed: %ld ms\n", time_diff(t1, t2));
 
     clean_matrix(mx1, N);
     clean_matrix(mx2, N);
