@@ -9,7 +9,7 @@ import util.double2complex
 object Main {
 
   def func(x: Double): Double = 2 * cos(5 * x) + sin(2 * x) + 1.5
-  val N = 64
+  val N = 256
 
   def wrap_Hz(func: Double => Double) = (e: Double) => func(e * 2 * Pi)
 

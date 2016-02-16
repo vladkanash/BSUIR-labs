@@ -6,17 +6,14 @@ import scala.math.{sin, cos}
   * Created by vladkanash on 2/12/16.
   */
 
-class FFTSpec extends FlatSpec with PrivateMethodTester with Matchers {
+class FFTSpec extends FTSpec {
 
-  def truncate(e: Complex, s: Int): Complex =
-    Complex(BigDecimal(e.real).setScale(s, BigDecimal.RoundingMode.HALF_UP).toDouble,
-      BigDecimal(e.imag).setScale(s, BigDecimal.RoundingMode.HALF_UP).toDouble)
 
   "A fast transform" should "produce the original signal after reverse transform" in {
     val input = (0 until 8).map(double2complex(_)).toList
     val output = FFT.transform(FFT.transform(input), dir = true)
       .map(truncate(_, 4))
-    input shouldEqual output
+    output shouldEqual input
   }
 
   it should "work in more complex cases" in {

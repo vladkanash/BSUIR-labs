@@ -4,10 +4,7 @@ import scala.math.{sin, cos, Pi}
   * Created by vladkanash on 2/12/16.
   */
 
-object FFT {
-
-  private def get_w(n: Int, dir: Int) =
-    Complex(cos(2 * Pi / n), dir * sin(2 * Pi / n))
+object FFT extends GenericFT {
 
   private def butterfly(a: Complex, b: Complex, w: Complex): (Complex, Complex) =
     (a + (w * b), a - (w * b))
@@ -18,10 +15,10 @@ object FFT {
                     res_left: List[Complex] = List.empty,
                     res_right: List[Complex] = List.empty): List[Complex] =
     list match {
-    case Nil => res_left ++ res_right
+    case Nil => res_left.reverse ++ res_right.reverse
     case head :: tail =>
       val but = butterfly(head._1, head._2, w)
-      butterfly_rec(tail, wn, w * wn, res_left :+ but._1, res_right :+ but._2)
+      butterfly_rec(tail, wn, w * wn, but._1 :: res_left, but._2 :: res_right)
   }
 
   private def splitEvenOdd(xs: List[Complex]): (List[Complex], List[Complex]) = xs match {
