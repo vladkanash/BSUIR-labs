@@ -7,7 +7,7 @@ set(SOURCE_FILES main.c)
 
 add_executable(AHPP_lab1 ${SOURCE_FILES})
 SET_TARGET_PROPERTIES(AHPP_lab1 PROPERTIES COMPILE_FLAGS
-        " -O2 -mno-sse2 -mno-avx -fopt-info-vec-optimized")
+        " -O2 -mno-sse2 -mno-avx")
 
 add_executable(AHPP_lab1_vect ${SOURCE_FILES})
 SET_TARGET_PROPERTIES(AHPP_lab1_vect PROPERTIES COMPILE_FLAGS

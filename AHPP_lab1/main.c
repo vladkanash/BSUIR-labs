@@ -2,7 +2,8 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define N 1200
+
+#define N 1300
 #define MAX_RAND 500
 
 float** alloc_matrix(unsigned size) {
