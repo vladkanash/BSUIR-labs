@@ -54,17 +54,17 @@ class PolarComplex(val magnitude:Double, val angle:Double) extends Complex {
 
 object Complex {
   // Default to the more-common rectangular version
-  def apply(real:Double, imag:Double) = new RectComplex(real, imag)
+  def apply(real:Double, imag:Double = 0) = new RectComplex(real, imag)
 }
 
 object RectComplex {
-  def apply(real:Double, imag:Double) = {
+  def apply(real:Double, imag:Double = 0) = {
     new RectComplex(real, imag)
   }
 }
 
 object PolarComplex {
-  def apply(magnitude:Double, angle:Double) = {
+  def apply(magnitude:Double, angle:Double = 0) = {
     new PolarComplex(magnitude, angle)
   }
 }

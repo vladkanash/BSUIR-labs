@@ -34,4 +34,13 @@ class DFTSpec extends FTSpec {
     val disc_out = DFT.transform(input).result.map(truncate(_, 4))
     fast_out shouldEqual disc_out
   }
+
+  it should "calculate multiplications count during the transform" in {
+    val input = (0 until 32)
+      .map(e => 2 * sin(3 * e) + 2 * cos(e) - 7)
+      .map(double2complex).toList
+    val multiplicationCount = DFT.transform(input).multiplications
+
+    multiplicationCount shouldEqual 32 * 32
+  }
 }

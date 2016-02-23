@@ -28,7 +28,7 @@ class FFTSpec extends FTSpec {
     output shouldEqual input
   }
 
-  it should "calculate the additions and multiplications count during the transform" in {
+  it should "calculate the additions count during the transform" in {
     val input = (0 until 32)
       .map(e => sin(5 * e) + 3 * cos(e) + 5)
       .map(double2complex).toList
@@ -38,9 +38,9 @@ class FFTSpec extends FTSpec {
   }
 
   "A recursive butterfly function" should "produce the correct result" in {
-    val butterfly_rec = PrivateMethod[(List[Complex], Int)]('butterfly_rec)
+    val butterflyRec = PrivateMethod[(List[Complex], Int)]('butterflyRec)
     val input = (1 to 5).map(e => (double2complex(e), double2complex(e))).toList
-    val output = FFT invokePrivate butterfly_rec(input, Complex(1, 0), Complex(1, 0), 0, List.empty, List.empty)
+    val output = FFT invokePrivate butterflyRec(input, Complex(1, 0), Complex(1, 0), 0, List.empty, List.empty)
     val excepted = List(2, 4, 6, 8, 10, 0, 0, 0, 0, 0).map(double2complex(_))
     output._1 shouldEqual excepted
   }
