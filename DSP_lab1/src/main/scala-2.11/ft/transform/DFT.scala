@@ -1,4 +1,6 @@
-package ft
+package ft.transform
+
+import ft.Complex
 
 /**
   * Created by vladkanash on 2/16/16.
@@ -10,7 +12,7 @@ object DFT extends GenericFT {
     if (N == 1) return FTResult(list)
 
     val resultList = (0 until N).map({ k =>
-      list.zipWithIndex.foldLeft(Complex(0, 0))({ (result, elem) =>
+      list.zipWithIndex.foldLeft(Complex(0))({ (result, elem) =>
         val X = elem._1
         val m: Double = elem._2
         getW(m * k / N, if (dir) 1 else -1) * X + result

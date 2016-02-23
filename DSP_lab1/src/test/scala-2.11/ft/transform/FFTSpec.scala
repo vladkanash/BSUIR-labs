@@ -1,5 +1,6 @@
-package ft
+package ft.transform
 
+import ft.Complex
 import ft.util.double2complex
 
 import scala.math.{cos, sin}
@@ -13,7 +14,7 @@ class FFTSpec extends FTSpec {
 
   "A fast transform" should "produce the original signal after reverse transform" in {
     val input = (0 until 8).map(double2complex(_)).toList
-    val output = FFT.transform(FFT.transform(input).result, dir = true).result
+    val output = FFT.transform(FFT.transform(input).resultList, dir = true).resultList
       .map(truncate(_, 4))
     output shouldEqual input
   }
@@ -23,7 +24,7 @@ class FFTSpec extends FTSpec {
       .map(e => sin(2 * e) + 3 * cos(e))
       .map(double2complex)
       .map(truncate(_, 8)).toList
-    val output = FFT.transform(FFT.transform(input).result, dir = true).result
+    val output = FFT.transform(FFT.transform(input).resultList, dir = true).resultList
       .map(truncate(_, 8))
     output shouldEqual input
   }

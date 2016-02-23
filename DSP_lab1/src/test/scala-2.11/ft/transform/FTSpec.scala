@@ -1,5 +1,6 @@
-package ft
+package ft.transform
 
+import ft.Complex
 import org.scalatest.{FlatSpec, Matchers, PrivateMethodTester}
 
 /**
@@ -11,4 +12,3 @@ trait FTSpec extends FlatSpec with Matchers with PrivateMethodTester {
     Complex(BigDecimal(e.real).setScale(s, BigDecimal.RoundingMode.HALF_UP).toDouble,
       BigDecimal(e.imag).setScale(s, BigDecimal.RoundingMode.HALF_UP).toDouble)
 }
-

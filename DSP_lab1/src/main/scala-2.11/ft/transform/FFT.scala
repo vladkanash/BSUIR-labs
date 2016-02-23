@@ -1,4 +1,6 @@
-package ft
+package ft.transform
+
+import ft.Complex
 
 /**
   * Created by vladkanash on 2/12/16.
@@ -39,7 +41,7 @@ object FFT extends GenericFT {
     val oddResult = transform(oddList, dir)
     val wn = getW(1 / N, if (dir) 1 else -1)
 
-    val (result, opCount) = butterflyRec(evenResult.result zip oddResult.result, wn)
+    val (result, opCount) = butterflyRec(evenResult.resultList zip oddResult.resultList, wn)
     val finalOpCount = evenResult.additions + oddResult.additions + opCount
       FTResult(result.map(e => if (dir) e / Complex(2) else e), finalOpCount, finalOpCount)
   }
