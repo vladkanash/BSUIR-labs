@@ -2,9 +2,7 @@ package ft
 
 
 import ft.transform.{FFT, DFT}
-
 import scala.swing._
-import scala.swing.event.MousePressed
 
 import Swing._
 /**
@@ -16,38 +14,28 @@ object SwingGUI extends SimpleSwingApplication {
 
     title = "Fourier transform"
 
-    val label = new Label {
-      text = "Hello"
-      listenTo(mouse.clicks)
-      reactions += {
-        case MousePressed(_, _, _, _, _) =>
-          println("Mouse pressed2")
-      }
-    }
+    val statsPanel = new BoxPanel(Orientation.Vertical) {
 
-    val panel = new BoxPanel(Orientation.Vertical) {
-
-      contents += new Label("DFT multiplications: " + FTCharts.getDFTMultiplications)
       contents += VStrut(10)
-      contents += new Label("DFT additions: " + FTCharts.getDFTAdditions)
+      contents += new Label("DFT multiplications: " + FTCharts.DFTMultiplications)
       contents += VStrut(10)
-      contents += new Label("FFT multiplications: " + FTCharts.getFFTAdditions)
+      contents += new Label("DFT additions: " + FTCharts.DFTAdditions)
       contents += VStrut(10)
-      contents += new Label("FFT additions: " + FTCharts.getFFTAdditions)
+      contents += new Label("FFT multiplications: " + FTCharts.FFTAdditions)
       contents += VStrut(10)
+      contents += new Label("FFT additions: " + FTCharts.FFTAdditions)
+      contents += VStrut(10)
+      contents += new Label("N = " + FTCharts.N)
     }
 
     contents = new TabbedPane {
-      pages += new TabbedPane.Page("Time chart", FTCharts.getTimeChart)
-      pages += new TabbedPane.Page("Frequency chart", FTCharts.getFrequencyChart(FFT))
-      pages += new TabbedPane.Page("Phase chart", FTCharts.getPhaseChart(FFT))
-      pages += new TabbedPane.Page("Phase chart", FTCharts.getPhaseChart(DFT))
-      pages += new TabbedPane.Page("Page 2", panel)
-
-
+      pages += new TabbedPane.Page("Initial signal", FTCharts.getTimeChart)
+      pages += new TabbedPane.Page("Frequency chart (FFT)", FTCharts.getFrequencyChart(FFT))
+      pages += new TabbedPane.Page("Frequency chart (DFT)", FTCharts.getFrequencyChart(DFT))
+      pages += new TabbedPane.Page("Restored signal (FFT)", FTCharts.getRevertChart(FFT))
+      pages += new TabbedPane.Page("Phase chart (DFT)", FTCharts.getPhaseChart(DFT))
+      pages += new TabbedPane.Page("Phase chart (FFT)", FTCharts.getPhaseChart(FFT))
+      pages += new TabbedPane.Page("Statistics", statsPanel)
     }
   }
-
-
-
 }

@@ -23,9 +23,9 @@ class FFTSpec extends FTSpec {
     val input = (0 until 16)
       .map(e => sin(2 * e) + 3 * cos(e))
       .map(double2complex)
-      .map(truncate(_, 8)).toList
+      .map(truncate(_, 4)).toList
     val output = FFT.transform(FFT.transform(input).resultList, dir = true).resultList
-      .map(truncate(_, 8))
+      .map(truncate(_, 4))
     output shouldEqual input
   }
 

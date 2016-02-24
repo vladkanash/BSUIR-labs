@@ -12,66 +12,62 @@ import scalax.chart.api._
 
 object FTCharts {
 
-  def func(x: Double): Double = 2 * cos(5 * x) + sin(2 * x) + 1.5
+  private def func(x: Double): Double = 2 * cos(5 * x) + sin(x) - 4 * sin(7 * x)
   val N = 64
 
   private def wrapHz(func: Double => Double) = (e: Double) => func(e * 2 * Pi)
 
-  private def generateTimeXs = for (i <- 0 until N) yield i * 1.0 / N
-  private def generateFrequencyXs = for (i <- 0 until N/2) yield i
+  private val generateTimeXs = for (i <- 0 until N) yield i * 1.0 / N
+  private val generateFrequencyXs = for (i <- 0 until N/2) yield i
 
-  private def generateTimeYs = generateTimeXs.map(wrapHz(func))
-  private def generateFreqYs(res: List[Complex], f: Complex => Double) =
-    res.map(f)
+  private val generateTimeYs = generateTimeXs.map(wrapHz(func))
+  private def generateFreqYs(res: List[Complex], phaseChart: Boolean = false) = phaseChart match {
+    case false => res.map(_.magnitude)
       .map(e => e * 2 / N) match {
       case h :: t => h / 2 :: t
       case Nil => Nil
     }
-
-  private def getFTresult(transformation: GenericFT) = {
-    val timeYs = generateTimeYs.toList
-    transformation.transform(timeYs.map(double2complex))
+    case true => res.map(_.angle)
   }
 
-  def getDFTMultiplications = getFTresult(DFT).multiplications
+  private def getFTResult(transformation: GenericFT, revert: Boolean = false) = {
+    val timeYs = generateTimeYs.toList
+    transformation.transform(timeYs.map(double2complex), revert)
+  }
 
-  def getDFTAdditions = getFTresult(DFT).additions
+  lazy val DFTMultiplications = getFTResult(DFT).multiplications
 
-  def getFFTMultiplications = getFTresult(FFT).multiplications
+  lazy val DFTAdditions = getFTResult(DFT).additions
 
-  def getFFTAdditions = getFTresult(FFT).additions
+  lazy val FFTMultiplications = getFTResult(FFT).multiplications
 
+  lazy val FFTAdditions = getFTResult(FFT).additions
 
   def getFrequencyChart(transformation: GenericFT) = {
-    val timeYs = generateTimeYs.toList
-    val res = transformation.transform(timeYs.map(double2complex)).resultList
+    val res = getFTResult(transformation).resultList
     val freqXs = generateFrequencyXs
-    val freqYs = generateFreqYs(res, _.magnitude)
-
-    XYLineChart(freqXs zip freqYs).toComponent
+    val freqYs = generateFreqYs(res)
+    XYBarChart(freqXs zip freqYs, legend = false).toComponent
   }
 
   def getPhaseChart(transformation: GenericFT) = {
-    val timeYs = generateTimeYs.toList
-    val res = transformation.transform(timeYs.map(double2complex)).resultList
+    val res = getFTResult(transformation).resultList
     val freqXs = generateFrequencyXs
-    val freqYs = generateFreqYs(res, _.angle)
-
-    XYLineChart(freqXs zip freqYs).toComponent
+    val freqYs = generateFreqYs(res, phaseChart = true)
+    XYBarChart(freqXs zip freqYs, legend = false).toComponent
   }
 
   def getTimeChart = {
     val XList = generateTimeXs.toList
     val YList = generateTimeYs.toList
-    XYLineChart(XList zip YList).toComponent
+    XYLineChart(XList zip YList, legend = false).toComponent
   }
 
   def getRevertChart(transformation: GenericFT) = {
     val timeXList = generateTimeXs.toList
-    val timeYList = generateTimeYs.toList
-    val result = transformation.transform(timeYList.map(double2complex)).resultList
+    val result = getFTResult(transformation).resultList
     val result2 = transformation.transform(result, dir = true).resultList
-    XYLineChart(timeXList zip result2.map(_.real)).toComponent
+    XYLineChart(timeXList zip result2.map(_.real), legend = false).toComponent
   }
 }
 

@@ -43,8 +43,12 @@ abstract class Complex extends Equals {
 }
 
 class RectComplex(val real:Double, val imag:Double) extends Complex {
+
+  private def truncate(e: Double, s: Int = 5): Double =
+    BigDecimal(e).setScale(s, BigDecimal.RoundingMode.HALF_UP).toDouble
+
   val magnitude = sqrt(real*real + imag*imag)
-  val angle:Double = atan2(imag, real)
+  val angle:Double = atan2(truncate(imag), truncate(real))
 }
 
 class PolarComplex(val magnitude:Double, val angle:Double) extends Complex {
