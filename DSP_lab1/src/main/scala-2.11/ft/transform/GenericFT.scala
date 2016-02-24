@@ -15,5 +15,4 @@ trait GenericFT {
     Complex(cos(2 * Pi * arg), dir * sin(2 * Pi * arg))
 
   def transform(list: List[Complex], dir: Boolean = false): FTResult
-
 }

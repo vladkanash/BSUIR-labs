@@ -39,11 +39,11 @@ class FFTSpec extends FTSpec {
   }
 
   "A recursive butterfly function" should "produce the correct result" in {
-    val butterflyRec = PrivateMethod[(List[Complex], Int)]('butterflyRec)
+    val butterflyRec = PrivateMethod[List[Complex]]('butterflyRec)
     val input = (1 to 5).map(e => (double2complex(e), double2complex(e))).toList
-    val output = FFT invokePrivate butterflyRec(input, Complex(1, 0), Complex(1, 0), 0, List.empty, List.empty)
+    val output = FFT invokePrivate butterflyRec(input, Complex(1, 0), Complex(1, 0), List.empty, List.empty)
     val excepted = List(2, 4, 6, 8, 10, 0, 0, 0, 0, 0).map(double2complex(_))
-    output._1 shouldEqual excepted
+    output shouldEqual excepted
   }
 
 }
