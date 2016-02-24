@@ -1,6 +1,5 @@
 package ft.transform
 
-import ft.Complex
 
 /**
   * Created by vladkanash on 2/12/16.
@@ -13,7 +12,7 @@ object FFT extends GenericFT {
 
   private def butterflyRec(list: List[(Complex, Complex)],
                             wn: Complex,
-                            w: Complex = Complex(1),
+                            w: Complex = 1,
                             resLeft: List[Complex] = List.empty,
                             resRight: List[Complex] = List.empty): List[Complex] =
     list match {
@@ -30,18 +29,22 @@ object FFT extends GenericFT {
     case Nil => (Nil, Nil)
   }
 
-  override def transform(list: List[Complex], dir: Boolean = false): FTResult = {
-    val N = list.length
-    if (N <= 1) return FTResult(list)
+  override def transform(list: List[Complex], dir: Boolean = false): List[Complex] = list match {
+    case head :: Nil => list
+    case _ =>
+      val N = list.length
 
-    val (evenList, oddList) = splitEvenOdd(list)
+      val (evenList, oddList) = splitEvenOdd(list)
 
-    val evenResult = transform(evenList, dir)
-    val oddResult = transform(oddList, dir)
-    val wn = getW(1 / N.toDouble, if (dir) 1 else -1)
+      val evenResult = transform(evenList, dir)
+      val oddResult = transform(oddList, dir)
+      val wn = getW(1 / N.toDouble, if (dir) 1 else -1)
 
-    val result = butterflyRec(evenResult.resultList zip oddResult.resultList, wn)
-    val operationsCount = (N * math.log2(N.toDouble)).toInt
-      FTResult(result.map(e => if (dir) e / Complex(2) else e), operationsCount, operationsCount)
+      butterflyRec(evenResult zip oddResult, wn)
+        .map(e => if (dir) e / 2 else e)
   }
+
+  override def getMultiplicationsCount(N: Int): Int = (N * math.log2(N)).toInt
+
+  override def getAdditionsCount(N: Int): Int = (N * math.log2(N)).toInt
 }

@@ -1,4 +1,4 @@
-package ft
+package ft.transform
 
 /**
   * Created by vladkanash on 2/12/16.
@@ -59,6 +59,11 @@ class PolarComplex(val magnitude:Double, val angle:Double) extends Complex {
 object Complex {
   // Default to the more-common rectangular version
   def apply(real:Double, imag:Double = 0) = new RectComplex(real, imag)
+
+  implicit def double2complex(real:Double):Complex = Complex(real, 0)
+  implicit def int2complex(real: Int):Complex = Complex(real, 0)
+  implicit def doubleList2complexList(list: List[Double]):List[Complex] = list.map(double2complex)
+  implicit def intList2complexList(list: List[Int]): List[Complex] = list.map(int2complex)
 }
 
 object RectComplex {
@@ -72,8 +77,3 @@ object PolarComplex {
     new PolarComplex(magnitude, angle)
   }
 }
-
-package object util {
-  implicit def double2complex(real:Double):Complex = RectComplex(real, 0)
-}
-

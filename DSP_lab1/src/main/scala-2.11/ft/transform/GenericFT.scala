@@ -1,7 +1,5 @@
 package ft.transform
 
-import ft.Complex
-
 import scala.math.{Pi, cos, sin}
 
 /**
@@ -14,5 +12,9 @@ trait GenericFT {
   protected def getW(arg: Double, dir: Int) =
     Complex(cos(2 * Pi * arg), dir * sin(2 * Pi * arg))
 
-  def transform(list: List[Complex], dir: Boolean = false): FTResult
+  def transform(list: List[Complex], dir: Boolean = false): List[Complex]
+
+  def getMultiplicationsCount(N: Int): Int
+
+  def getAdditionsCount(N: Int): Int
 }

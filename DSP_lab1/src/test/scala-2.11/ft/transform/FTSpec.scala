@@ -1,6 +1,5 @@
 package ft.transform
 
-import ft.Complex
 import org.scalatest.{FlatSpec, Matchers, PrivateMethodTester}
 
 /**

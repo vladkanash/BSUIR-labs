@@ -1,7 +1,6 @@
 package ft
 
-import ft.transform.{FFT, DFT, GenericFT}
-import ft.util.double2complex
+import ft.transform.{Complex, FFT, DFT, GenericFT}
 
 import scala.math._
 import scalax.chart.api._
@@ -32,26 +31,26 @@ object FTCharts {
 
   private def getFTResult(transformation: GenericFT, revert: Boolean = false) = {
     val timeYs = generateTimeYs.toList
-    transformation.transform(timeYs.map(double2complex), revert)
+    transformation.transform(timeYs, revert)
   }
 
-  lazy val DFTMultiplications = getFTResult(DFT).multiplications
+  val DFTMultiplications = DFT.getMultiplicationsCount(N)
 
-  lazy val DFTAdditions = getFTResult(DFT).additions
+  val DFTAdditions = DFT.getAdditionsCount(N)
 
-  lazy val FFTMultiplications = getFTResult(FFT).multiplications
+  val FFTMultiplications = FFT.getMultiplicationsCount(N)
 
-  lazy val FFTAdditions = getFTResult(FFT).additions
+  val FFTAdditions = FFT.getAdditionsCount(N)
 
   def getFrequencyChart(transformation: GenericFT) = {
-    val res = getFTResult(transformation).resultList
+    val res = getFTResult(transformation)
     val freqXs = generateFrequencyXs
     val freqYs = generateFreqYs(res)
     XYBarChart(freqXs zip freqYs, legend = false).toComponent
   }
 
   def getPhaseChart(transformation: GenericFT) = {
-    val res = getFTResult(transformation).resultList
+    val res = getFTResult(transformation)
     val freqXs = generateFrequencyXs
     val freqYs = generateFreqYs(res, phaseChart = true)
     XYBarChart(freqXs zip freqYs, legend = false).toComponent
@@ -65,9 +64,9 @@ object FTCharts {
 
   def getRevertChart(transformation: GenericFT) = {
     val timeXList = generateTimeXs.toList
-    val result = getFTResult(transformation).resultList
-    val result2 = transformation.transform(result, dir = true).resultList
-    XYLineChart(timeXList zip result2.map(_.real), legend = false).toComponent
+    val result = getFTResult(transformation)
+    val restored = transformation.transform(result, dir = true)
+    XYLineChart(timeXList zip restored.map(_.real), legend = false).toComponent
   }
 }
 
