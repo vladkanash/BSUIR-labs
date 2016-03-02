@@ -26,13 +26,13 @@ SET_TARGET_PROPERTIES(lab2_autovect_no_openmp PROPERTIES COMPILE_FLAGS
 #Intrinsic vectorizing without OpenMP
 add_executable(lab2_customvect_no_openmp ${SOURCE_FILES})
 SET_TARGET_PROPERTIES(lab2_customvect_no_openmp PROPERTIES COMPILE_FLAGS
-        "-O2 -msse2 -DMY_VECTORIZE_NO_OPENMP")
+        "-O1 -msse2 -DMY_VECTORIZE_NO_OPENMP")
 
 
 #Intrinsic vectorizing with OpenMP
 add_executable(lab2_customvect_openmp ${SOURCE_FILES})
 SET_TARGET_PROPERTIES(lab2_customvect_openmp PROPERTIES COMPILE_FLAGS
-        "-O2 -DMY_VECTORIZE_OPENMP")
+        "-O1 -DMY_VECTORIZE_OPENMP")
 
 
 

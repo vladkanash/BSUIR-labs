@@ -106,10 +106,10 @@ TYPE** multiply_matrix(TYPE** ptr_1, TYPE** ptr_2, unsigned size) {
                 _mm_store_ps(res_line + k, v2);
 
                 v2 = _mm_load_ps(res_line + k - sizeof(TYPE));
-                v3 = _mm_load_ps(m2_line + k- sizeof(TYPE));
+                v3 = _mm_load_ps(m2_line + k - sizeof(TYPE));
                 v3 = _mm_mul_ps(v3, v1);
                 v2 = _mm_add_ps(v2, v3);
-                _mm_store_ps(res_line + k- sizeof(TYPE), v2);
+                _mm_store_ps(res_line + k - sizeof(TYPE), v2);
             }
         }
     }

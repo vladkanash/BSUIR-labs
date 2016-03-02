@@ -35,7 +35,8 @@ int main(int argc, char** argv) {
         exit(1);
     }
 
-    unsigned long long elapsed = rdtsc();
+    unsigned long long elapsed = 0;
+    elapsed = rdtsc();
 
     for (int i = 0; i < N; i++) {
         __asm__ ("or %eax, %ebx;"
@@ -44,13 +45,31 @@ int main(int argc, char** argv) {
                  "or %eax, %ebx;");
     }
 
-    unsigned int op_count = 4 * N;
+    unsigned long long latency_elapsed = rdtsc() - elapsed;
 
-    elapsed = rdtsc() - elapsed;
+    unsigned int latency_op_count = 4 * N;
 
-    double latency = elapsed / (double) op_count;
+    double latency = latency_elapsed / (double) latency_op_count;
 
-    printf("Ticks elapsed: %llu \n", elapsed);
+    elapsed = rdtsc();
+
+    for (int i = 0; i < N; i++) {
+        __asm__ ("or %eax, %eax;"
+                "or %ebx, %ebx;"
+                "or %ecx, %ecx;"
+                "or %edx, %edx;");
+    }
+
+    unsigned long long throughput_elapsed = rdtsc() - elapsed;
+
+    unsigned int throughput_op_count = 4 * N;
+
+    double throughput = throughput_elapsed / (double) throughput_op_count;
+
+    printf("Latency ticks elapsed: %llu \n", latency_elapsed);
     printf("Latency: %.2lf \n", latency);
+
+    printf("Throughput ticks elapsed: %llu \n", throughput_elapsed);
+    printf("Throughput: %.2lf \n", throughput);
     return 0;
 }
