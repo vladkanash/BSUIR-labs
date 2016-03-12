@@ -1,4 +1,6 @@
-package ft.transform
+package dsp.lab1.transform
+
+import dsp.util.Complex
 
 
 /**
@@ -29,15 +31,15 @@ object FFT extends GenericFT {
     case Nil => (Nil, Nil)
   }
 
-  override def transform(list: List[Complex], dir: Boolean = false): List[Complex] = list match {
+  override def apply(list: List[Complex], dir: Boolean = false): List[Complex] = list match {
     case head :: Nil => list
     case _ =>
       val N = list.length
 
       val (evenList, oddList) = splitEvenOdd(list)
 
-      val evenResult = transform(evenList, dir)
-      val oddResult = transform(oddList, dir)
+      val evenResult = apply(evenList, dir)
+      val oddResult = apply(oddList, dir)
       val wn = getW(1 / N.toDouble, if (dir) 1 else -1)
 
       butterflyRec(evenResult zip oddResult, wn)

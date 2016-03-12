@@ -3,5 +3,5 @@
   */
 
 package object math {
-  def log2(x:Double):Double = scala.math.log(x) / scala.math.log(2)
+  def log2(x:Double): Double = scala.math.log(x) / scala.math.log(2)
 }

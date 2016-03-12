@@ -1,4 +1,7 @@
-package ft.transform
+package dsp.lab1.transform
+
+import dsp.GenericSpec
+import dsp.util.Complex
 
 import scala.math.{cos, sin}
 
@@ -6,12 +9,12 @@ import scala.math.{cos, sin}
   * Created by vladkanash on 2/12/16.
   */
 
-class FFTSpec extends FTSpec {
+class FFTSpec extends GenericSpec {
 
 
   "A fast transform" should "produce the original signal after reverse transform" in {
     val input: List[Complex] = (0 until 8).toList
-    val output = FFT.transform(FFT.transform(input), dir = true)
+    val output = FFT(FFT(input), dir = true)
       .map(truncate(_, 4))
     output shouldEqual input
   }
@@ -20,7 +23,7 @@ class FFTSpec extends FTSpec {
     val input: List[Complex] = (0 until 16)
       .map(e => sin(2 * e) + 3 * cos(e))
       .map(truncate(_, 4)).toList
-    val output = FFT.transform(FFT.transform(input), dir = true)
+    val output = FFT(FFT(input), dir = true)
       .map(truncate(_, 4))
     output shouldEqual input
   }

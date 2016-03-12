@@ -1,7 +1,7 @@
-package ft
+package dsp.lab1
 
 
-import ft.transform.{FFT, DFT}
+import dsp.lab1.transform.{FFT, DFT}
 import scala.swing._
 
 import Swing._

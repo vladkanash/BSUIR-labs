@@ -1,6 +1,7 @@
-package ft
+package dsp.lab1
 
-import ft.transform.{Complex, FFT, DFT, GenericFT}
+import dsp.lab1.transform.{FFT, DFT, GenericFT}
+import dsp.util.Complex
 
 import scala.math._
 import scalax.chart.api._
@@ -31,7 +32,7 @@ object FTCharts {
 
   private def getFTResult(transformation: GenericFT, revert: Boolean = false) = {
     val timeYs = generateTimeYs.toList
-    transformation.transform(timeYs, revert)
+    transformation(timeYs, revert)
   }
 
   val DFTMultiplications = DFT.getMultiplicationsCount(N)
@@ -65,7 +66,7 @@ object FTCharts {
   def getRevertChart(transformation: GenericFT) = {
     val timeXList = generateTimeXs.toList
     val result = getFTResult(transformation)
-    val restored = transformation.transform(result, dir = true)
+    val restored = transformation(result, dir = true)
     XYLineChart(timeXList zip restored.map(_.real), legend = false).toComponent
   }
 }
