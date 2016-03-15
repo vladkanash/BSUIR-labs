@@ -1,4 +1,4 @@
-package dsp.lab2
+package dsp.lab2.transform
 
 import dsp.lab1.transform.FFT
 import dsp.util.Complex

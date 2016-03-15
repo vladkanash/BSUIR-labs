@@ -1,4 +1,4 @@
-package dsp.lab2
+package dsp.lab2.transform
 
 import dsp.util.Complex
 

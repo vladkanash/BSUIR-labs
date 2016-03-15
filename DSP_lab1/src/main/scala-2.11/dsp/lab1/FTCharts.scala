@@ -13,7 +13,7 @@ import scalax.chart.api._
 object FTCharts {
 
   private def func(x: Double): Double = 2 * cos(5 * x) + sin(x) - 4 * sin(7 * x)
-  val N = 64
+  val N = 256
 
   private def wrapHz(func: Double => Double) = (e: Double) => func(e * 2 * Pi)
 
