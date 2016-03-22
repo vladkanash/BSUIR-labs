@@ -1,95 +1,57 @@
 #include <iostream>
+#include <string.h>
 #include <x86intrin.h>
 
-const int BLOCK_SIZE = 32 * 1024 * 8;//32768; //262144;  //3145728
-const int CACHE_SIZE = 16 * 1024 * 1024; // 16 Мб
-const int OP_COUNT = 25;
+//
+// Created by vladkanash on 3/22/16.
+//
 
-template<typename type>
-void align(type *buffer, int fragmentSize, int offset, int numberOfWays) {
+#define BLOCK_SIZE 32 * 1024
+#define MAX_N 20
+#define OFFSET 1024 * 1024
+#define ELEMENT_SIZE sizeof(type)
 
-    for (int i = 0; i < numberOfWays; i++) {
-
-        for (int j = 0; j < fragmentSize; j++) {
-
-            if (i < numberOfWays - 1) {
-                buffer[i * offset + j] = offset * (i + 1) + j;
-            }
-            else {
-
-                if (j < fragmentSize - 1)
-                    buffer[i * offset + j] = j + 1;
-                else
-                    buffer[i * offset + j] = 0;
-            }
-        }
-    }
-}
-
-
-template<typename type>
-uint64_t* getResult(type buf[], int offsetInBytes, int maxCountOfIterations, int blockSizeInBytes) {
-    uint64_t* results = new uint64_t[OP_COUNT];
-
-    if (!buf)
-    exit(EXIT_FAILURE);
-
-    uint64_t begin;
-    int offset = (int) (offsetInBytes / sizeof(type));
-
-    for (int i = 1; i < maxCountOfIterations; i++) {
-
-        int fragmentSize = (int) (blockSizeInBytes / (sizeof(int) * i));
-        int iterCount = fragmentSize * i;
-
-        align(buf, fragmentSize, offset, i);
-
-        type index;
-        index = 0;
-
-        begin = __rdtsc();
-
-        for (int j = 0; j < iterCount; j++) {
-            index = buf[index];
-            buf[index] *= 1;
-            //if(j == 100)
-            //printf(" ");
-        }
-
-        results[i] = __rdtsc() - begin;
-    }
-
-    return results;
-}
-
+typedef unsigned long long type;
 
 int main() {
 
-    int number = 4;
-    int* buffer;
-    uint64_t *results;
+    type* array;
+    unsigned line_size;
+    unsigned line_count;
+    unsigned offset_count = OFFSET / ELEMENT_SIZE;
+    type index;
+    unsigned long long begin, end;
 
-    buffer = (int *)aligned_alloc((size_t)(CACHE_SIZE * OP_COUNT), 64);
-    results = (uint64_t *)aligned_alloc((size_t)(OP_COUNT * sizeof(uint64_t)), 64);
+    for (unsigned N = 1; N <= MAX_N; N++) {
 
-    for (int j = 1; j < OP_COUNT; j++) {
-        results[j] = 0;
+        line_size = BLOCK_SIZE / N;
+        line_count = (unsigned int) (line_size / ELEMENT_SIZE);
+        size_t size = (size_t) (OFFSET * N);
+
+        array = (type*) aligned_alloc((size_t)(OFFSET), size);
+        memset(array, 0, size);
+
+        for (unsigned n = 0; n < N; n++) {
+            for (unsigned i = 0; i < line_count; i++) {
+                array[n * offset_count + i] = (n == N - 1) ? (type)(i + 1) : (type) ((n + 1) * offset_count + i);
+            }
+        }
+
+        begin = __rdtsc();
+
+        index = 0;
+        for (int i = 0; i < line_count * N; i++) {
+            index = array[index];
+            array[index] *= 1;
+        }
+
+        end = __rdtsc() - begin;
+        printf("N = %2d %llu\r\n", N, end);
+
     }
-
-
-    for (int i = 0; i < number; i++) {
-        uint64_t *result = getResult(buffer, CACHE_SIZE, OP_COUNT, BLOCK_SIZE);
-
-        for (int j = 1; j < OP_COUNT; j++)
-            results[j] += result[j];
-    }
-
-    for (int j = 1; j < OP_COUNT; j++)
-        results[j] /= (number);
-
-    for (int i = 1; i < OP_COUNT; i++)
-        printf("%d %lu\r\n", i, results[i]);
 
     return 0;
 }
+
+
 
