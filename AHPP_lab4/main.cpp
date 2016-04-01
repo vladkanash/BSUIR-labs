@@ -6,12 +6,13 @@
 // Created by vladkanash on 3/22/16.
 //
 
-#define BLOCK_SIZE 32 * 1024
+#define ITER_COUNT 1000000
+#define BLOCK_SIZE 1024 * 1024
 #define MAX_N 20
 #define OFFSET 1024 * 1024
 #define ELEMENT_SIZE sizeof(type)
 
-typedef unsigned long long type;
+typedef uint64_t type;
 
 int main() {
 
@@ -20,7 +21,7 @@ int main() {
     unsigned line_count;
     unsigned offset_count = OFFSET / ELEMENT_SIZE;
     type index;
-    unsigned long long begin, end;
+    uint64_t begin, end;
 
     for (unsigned N = 1; N <= MAX_N; N++) {
 
@@ -37,17 +38,16 @@ int main() {
             }
         }
 
-        begin = __rdtsc();
-
         index = 0;
-        for (int i = 0; i < line_count * N; i++) {
+
+        begin = __rdtsc();
+        for (unsigned long i = 0; i < ITER_COUNT; i++) {
             index = array[index];
             array[index] *= 1;
         }
-
         end = __rdtsc() - begin;
-        printf("N = %2d %llu\r\n", N, end);
 
+        printf("N = %2d %llu\r\n", N, end);
     }
 
     return 0;
