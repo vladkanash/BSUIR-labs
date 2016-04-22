@@ -8,7 +8,7 @@
 #include <device_launch_parameters.h>
 
 #define FIBER 32
-#define N 2048
+#define N 1024
 #define DATA_SIZE N * N * sizeof(int)
 
 void print(int** r);
@@ -30,8 +30,8 @@ __global__ void kernel_shared(int *a, int *c, int *b, int *r) {
     int y = block_y + ty;
     int idx = x + y * N;
 
-    int smem_x = block_y + tx;
-    int smem_y = block_x + ty;
+    int smem_x = by * dy + tx;
+    int smem_y = bx * dx + ty;
     int smem_idx = smem_x + smem_y * N;
 
     smem[dx * ty + tx] = a[smem_idx] + a[smem_idx];
@@ -91,7 +91,7 @@ bool checkForErrors(int *ptr1, int *ptr2, int *ptr3) {
     for (int i = 0; i < N; i++)
 		for (int j = 0; j < N; j++)
 			if((ptr1[i * N + j] != ptr3[i * N + j]) || (ptr1[i * N + j] != ptr2[i * N + j])) {
-                printf("\n%d != %d [%d]\n", ptr1[i * N + j], ptr3[i * N + j], i * N + j);
+                printf("\n%d != %d [%d]\n", ptr1[i * N + j], ptr2[i * N + j], i * N + j);
                 return false;
             }
 
