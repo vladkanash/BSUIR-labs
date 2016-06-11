@@ -1,4 +1,4 @@
-name := "DSP_lab1"
+name := "DSP_labs"
 
 version := "1.0"
 

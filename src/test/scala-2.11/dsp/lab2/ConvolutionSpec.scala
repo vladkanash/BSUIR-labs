@@ -11,8 +11,6 @@ class ConvolutionSpec extends GenericSpec {
   "A convolution function" should "produce the correct result" in {
     val input = List(0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0)
     val output = Convolution(input, input).map(truncate(_, 3))
-
-    print(output)
   }
 
   it should "produce the same result with discrete convolution" in {

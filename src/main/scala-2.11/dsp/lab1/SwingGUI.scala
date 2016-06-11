@@ -1,10 +1,10 @@
 package dsp.lab1
 
+import dsp.lab1.transform.{DFT, FFT}
 
-import dsp.lab1.transform.{FFT, DFT}
+import scala.swing.Swing._
 import scala.swing._
 
-import Swing._
 /**
   * Created by vladkanash on 2/23/16.
   */

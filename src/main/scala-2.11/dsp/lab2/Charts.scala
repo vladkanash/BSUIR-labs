@@ -3,7 +3,7 @@ package dsp.lab2
 import dsp.lab2.transform.{DiscreteCorrelation, DiscreteConvolution, Correlation, Convolution}
 import dsp.util.RotatedIterator
 
-import scalax.chart.module.ChartFactories.{XYBarChart, XYLineChart}
+import scalax.chart.module.ChartFactories.XYLineChart
 import scala.math._
 
 /**

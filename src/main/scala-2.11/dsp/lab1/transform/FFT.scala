@@ -2,27 +2,26 @@ package dsp.lab1.transform
 
 import dsp.util.Complex
 
-
 /**
   * Created by vladkanash on 2/12/16.
   */
 
-object FFT extends GenericFT {
+object FFT  extends GenericFT {
 
   private def butterfly(a: Complex, b: Complex, w: Complex): (Complex, Complex) =
     (a + (w * b), a - (w * b))
 
   private def butterflyRec(list: List[(Complex, Complex)],
-                            wn: Complex,
-                            w: Complex = 1,
-                            resLeft: List[Complex] = List.empty,
-                            resRight: List[Complex] = List.empty): List[Complex] =
+                           wn: Complex,
+                           w: Complex = 1,
+                           resLeft: List[Complex] = List.empty,
+                           resRight: List[Complex] = List.empty): List[Complex] =
     list match {
-    case Nil => resLeft.reverse ::: resRight.reverse
-    case head :: tail =>
-      val butRes = butterfly(head._1, head._2, w)
-      butterflyRec(tail, wn, w * wn, butRes._1 :: resLeft, butRes._2 :: resRight)
-  }
+      case Nil => resLeft.reverse ::: resRight.reverse
+      case head :: tail =>
+        val butRes = butterfly(head._1, head._2, w)
+        butterflyRec(tail, wn, w * wn, butRes._1 :: resLeft, butRes._2 :: resRight)
+    }
 
   private def splitEvenOdd(xs: List[Complex]): (List[Complex], List[Complex]) = xs match {
     case e :: o :: xt =>
