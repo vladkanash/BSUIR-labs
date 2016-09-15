@@ -1,16 +1,18 @@
+package com.bsuir.modeling.lab1.random;
+
 import java.util.function.DoubleUnaryOperator;
 import java.util.stream.DoubleStream;
 
-class LehmerRandomGenerator implements RandomGenerator {
+public class LehmerRandomGenerator implements RandomGenerator {
 
 	private double r;
 	private final double m;
 	private final DoubleUnaryOperator lehmerTransform;
 
-    LehmerRandomGenerator(double r, double a, double m) {
-    	this.m = m;
+    public LehmerRandomGenerator(double r, double a, double m) {
+		this.m = m == 0.0 ? 1.0 : m;
     	this.r = r;
-    	this.lehmerTransform = e -> (a * e) % m;
+    	this.lehmerTransform = e -> (a * e) % this.m;
     }
 
     public double nextRandom() {
