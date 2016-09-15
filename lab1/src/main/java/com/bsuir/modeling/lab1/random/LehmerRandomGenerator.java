@@ -3,6 +3,9 @@ package com.bsuir.modeling.lab1.random;
 import java.util.function.DoubleUnaryOperator;
 import java.util.stream.DoubleStream;
 
+/**
+ * Created by Vlad Kanash on 2.9.16.
+ */
 public class LehmerRandomGenerator implements RandomGenerator {
 
 	private double r;

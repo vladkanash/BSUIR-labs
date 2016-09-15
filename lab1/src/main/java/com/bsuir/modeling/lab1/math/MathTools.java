@@ -10,9 +10,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Created by root on 15.9.16.
+ * Created by Vlad Kanash on 15.9.16.
  */
 public class MathTools {
+
+    private MathTools() {}
 
     public static double mean(double[] data) {
         return StatUtils.mean(data);

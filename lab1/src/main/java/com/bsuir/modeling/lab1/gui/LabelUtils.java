@@ -9,6 +9,8 @@ import com.bsuir.modeling.lab1.random.RandomGenerator;
  */
 class LabelUtils {
 
+    private LabelUtils() {}
+
     static String getExpectedValueLabel(double[] values) {
         return String.format("%s %.3f", Constants.EXPECTED_VALUE_LABEL,
                 MathTools.mean(values));
