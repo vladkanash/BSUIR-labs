@@ -1,6 +1,6 @@
 package com.bsuir.modeling.lab1.math;
 
-import com.bsuir.modeling.lab1.Constants;
+import com.bsuir.modeling.lab1.constants.GUIConstants;
 import com.bsuir.modeling.lab1.random.RandomGenerator;
 import org.apache.commons.math3.stat.StatUtils;
 import org.apache.commons.math3.util.Pair;
@@ -38,15 +38,15 @@ public class MathTools {
         long K = pairs.stream().filter(e ->
                 (Math.pow(e.getFirst(), 2) + Math.pow(e.getSecond(), 2) < 1)).count();
 
-        return K * 2.0 / Constants.RANDOM_LIMIT;
+        return K * 2.0 / GUIConstants.RANDOM_LIMIT;
     }
 
     //TODO optimize
     public static int period(RandomGenerator generator) {
-        double lastValue = generator.getStream().limit(Constants.PERIOD_LIMIT)
+        double lastValue = generator.getStream().limit(GUIConstants.PERIOD_LIMIT)
                 .reduce((a, b) -> b).orElse(0);
 
-        List<Double> list = generator.getStream().limit(Constants.PERIOD_LIMIT)
+        List<Double> list = generator.getStream().limit(GUIConstants.PERIOD_LIMIT)
                 .boxed().collect(Collectors.toList());
 
         int i1 = list.indexOf(lastValue);
@@ -58,7 +58,7 @@ public class MathTools {
 
     //TODO optimize
     public static int aperiod(RandomGenerator generator) {
-        List<Double> list = generator.getStream().limit(Constants.PERIOD_LIMIT)
+        List<Double> list = generator.getStream().limit(GUIConstants.PERIOD_LIMIT)
                 .boxed().collect(Collectors.toList());
 
         int period = period(generator);

@@ -1,6 +1,6 @@
 package com.bsuir.modeling.lab1.gui;
 
-import com.bsuir.modeling.lab1.Constants;
+import com.bsuir.modeling.lab1.constants.GUIConstants;
 import com.bsuir.modeling.lab1.chart.ChartService;
 import com.bsuir.modeling.lab1.random.LehmerRandomGenerator;
 import com.bsuir.modeling.lab1.random.RandomGenerator;
@@ -10,7 +10,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.Locale;
+import java.util.*;
 
 /**
  * Created by Vlad Kanash on 12.9.16.
@@ -24,19 +24,15 @@ public class ChartGUI {
     private final static JLabel aperiod = new JLabel();
     private final static JLabel standardDeviation = new JLabel();
 
-    private static JTextField inputR;
-    private static JTextField inputA;
-    private static JTextField inputM;
-
     private final static JPanel chartBlock = new JPanel();
     private final static JPanel infoBlock = new JPanel();
     private final static JPanel inputBlock = new JPanel();
     private final static JPanel bottomBlock = new JPanel();
 
-    public static void init() {
+    public static void init(RandomGenerator generator) {
         SwingUtilities.invokeLater(() -> {
             initInfoBlock();
-            initInputBlock();
+            initInputBlock(generator);
             initBottomBlock();
             initChartBlock();
             initFrame();
@@ -51,49 +47,58 @@ public class ChartGUI {
     }
 
     private static void initChartBlock() {
-        final JPanel chartPanel = getNewChartPanel
-                (Constants.INIT_R, Constants.INIT_A, Constants.INIT_M );
+
+        final JPanel chartPanel = getNewChartPanel(Collections.emptyMap());
 
         chartBlock.setLayout(new BorderLayout());
         chartBlock.add(chartPanel);
     }
 
-    private static void initInputBlock() {
+    private static void initInputBlock(RandomGenerator generator) {
         inputBlock.setLayout(new BoxLayout(inputBlock, BoxLayout.PAGE_AXIS));
-
-        inputR = initTextField(Constants.INIT_R);
-        inputA = initTextField(Constants.INIT_A);
-        inputM = initTextField(Constants.INIT_M);
-
-        final JPanel rInputPanel = initInputPanel(inputR, Constants.R_INPUT_LABEL);
-        final JPanel aInputPanel = initInputPanel(inputA, Constants.A_INPUT_LABEL);
-        final JPanel mInputPanel = initInputPanel(inputM, Constants.M_INPUT_LABEL);
-
         inputBlock.setBackground(Color.WHITE);
         inputBlock.setAlignmentX(Component.LEFT_ALIGNMENT);
-        inputBlock.add(rInputPanel);
-        inputBlock.add(aInputPanel);
-        inputBlock.add(mInputPanel);
+
+        JPanel inputPanel = null;
+
+        for (Map.Entry<String, Double> entry : generator.getInitParams().entrySet()) {
+            final JTextField input = initTextField(entry.getValue());
+            inputPanel = initInputPanel(input, entry.getKey());
+            inputBlock.add(inputPanel);
+        }
 
         setInputVerifiers();
 
-        rInputPanel.add(new JButton(new AbstractAction(Constants.BUTTON_LABEL) {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                updateData();
-            }
-        }));
+        if (inputPanel != null) {
+            inputPanel.add(new JButton(new AbstractAction(GUIConstants.BUTTON_LABEL) {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    updateData(generator);
+                }
+            }));
+        }
     }
 
-    private static void updateData() {
-        final int R = Integer.valueOf(inputR.getText());
-        final int A = Integer.valueOf(inputA.getText());
-        final int M = Integer.valueOf(inputM.getText());
+    private static void updateData(RandomGenerator generator) {
+
+        Set<String> paramNames = generator.getInitParams().keySet();
+        Map<String, Double> newParams = new HashMap<>();
+
+        for (Component inputPanel : inputBlock.getComponents()) {
+            String name = inputPanel.getName();
+            if (inputPanel instanceof JPanel && paramNames.contains(name)) {
+                for (Component textField : ((JPanel) inputPanel).getComponents()) {
+                    if (textField instanceof JTextField ) {
+                        newParams.put(name, Double.valueOf(((JTextField) textField).getText()));
+                    }
+                }
+            }
+        }
 
         chartBlock.removeAll();
         chartBlock.revalidate();
         chartBlock.setLayout(new BorderLayout());
-        chartBlock.add(getNewChartPanel(R, A, M));
+        chartBlock.add(getNewChartPanel(newParams));
         chartBlock.repaint();
     }
 
@@ -102,7 +107,8 @@ public class ChartGUI {
         panel.setLayout(new FlowLayout(FlowLayout.LEFT));
         panel.add(inputR);
         panel.setBackground(Color.WHITE);
-        panel.add(new JLabel(text));
+        panel.add(new JLabel(GUIConstants.ENTER_LABEL_TEXT + text));
+        panel.setName(text);
         return panel;
     }
 
@@ -128,7 +134,7 @@ public class ChartGUI {
         aperiod.setInputVerifier(verifier);
     }
 
-    private static JTextField initTextField(int value) {
+    private static JTextField initTextField(double value) {
         final NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.getDefault());
         final DecimalFormat decimalFormat = (DecimalFormat) numberFormat;
         decimalFormat.setGroupingUsed(false);
@@ -138,27 +144,25 @@ public class ChartGUI {
         return input;
     }
 
-    private static JPanel getNewChartPanel(int R, int A, int M) {
-        RandomGenerator generator = new LehmerRandomGenerator(R, A, M);
-        final double[] values = updateLabels(generator);
+    private static JPanel getNewChartPanel(Map<String, Double> params) {
+        RandomGenerator generator = new LehmerRandomGenerator(params);
+        final double[] values = generator.getStream().limit(GUIConstants.RANDOM_LIMIT).toArray();
+        updateLabels(values, generator);
         return ChartService.generateFrequencyHistogramPanel(values);
     }
 
-    private static double[] updateLabels(RandomGenerator generator) {
-        final double[] values = generator.getStream().limit(Constants.RANDOM_LIMIT).toArray();
-
+    private static void updateLabels(double[] values, RandomGenerator generator) {
         expectedValue.setText(LabelUtils.getExpectedValueLabel(values));
         variance.setText(LabelUtils.getVarianceString(values));
         check.setText(LabelUtils.getCheckString(values));
         aperiod.setText(LabelUtils.getAPeriodString(generator));
         period.setText(LabelUtils.getPeriodString(generator));
         standardDeviation.setText(LabelUtils.getSkoString(values));
-        return values;
     }
 
     private static void initFrame() {
-        JFrame frame = new JFrame(Constants.GUI_WINDOW_NAME);
-        frame.setSize(Constants.GUI_WINDOW_WIDTH, Constants.GUI_WINDOW_HEIGHT);
+        JFrame frame = new JFrame(GUIConstants.GUI_WINDOW_NAME);
+        frame.setSize(GUIConstants.GUI_WINDOW_WIDTH, GUIConstants.GUI_WINDOW_HEIGHT);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setVisible(true);
 

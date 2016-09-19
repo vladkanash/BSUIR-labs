@@ -1,6 +1,6 @@
 package com.bsuir.modeling.lab1.chart;
 
-import com.bsuir.modeling.lab1.Constants;
+import com.bsuir.modeling.lab1.constants.GUIConstants;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -18,7 +18,7 @@ public class ChartService {
 
         HistogramDataset dataset = new HistogramDataset();
         dataset.setType(HistogramType.RELATIVE_FREQUENCY);
-        dataset.addSeries(Constants.GUI_PLOT_TITLE, values, Constants.HISTOGRAM_COLUMNS_NUM);
+        dataset.addSeries(GUIConstants.GUI_PLOT_TITLE, values, GUIConstants.HISTOGRAM_COLUMNS_NUM);
 
         PlotOrientation orientation = PlotOrientation.VERTICAL;
         boolean legend = false;

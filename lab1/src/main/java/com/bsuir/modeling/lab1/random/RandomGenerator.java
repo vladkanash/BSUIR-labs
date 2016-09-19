@@ -1,5 +1,6 @@
 package com.bsuir.modeling.lab1.random;
 
+import java.util.Map;
 import java.util.stream.DoubleStream;
 
 /**
@@ -8,4 +9,6 @@ import java.util.stream.DoubleStream;
 public interface RandomGenerator {
 
     DoubleStream getStream();
+
+    Map<String, Double> getInitParams();
 }
