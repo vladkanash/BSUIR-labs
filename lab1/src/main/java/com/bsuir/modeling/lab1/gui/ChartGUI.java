@@ -2,12 +2,13 @@ package com.bsuir.modeling.lab1.gui;
 
 import com.bsuir.modeling.lab1.constants.GUIConstants;
 import com.bsuir.modeling.lab1.chart.ChartService;
-import com.bsuir.modeling.lab1.random.LehmerRandomGenerator;
 import com.bsuir.modeling.lab1.random.RandomGenerator;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.*;
@@ -34,10 +35,11 @@ public class ChartGUI {
             initInfoBlock();
             initInputBlock(generator);
             initBottomBlock();
-            initChartBlock();
+            initChartBlock(generator);
             initFrame();
         });
     }
+
 
     private static void initBottomBlock() {
         bottomBlock.setLayout(new FlowLayout(FlowLayout.LEFT));
@@ -46,9 +48,9 @@ public class ChartGUI {
         bottomBlock.add(infoBlock, BorderLayout.WEST);
     }
 
-    private static void initChartBlock() {
+    private static void initChartBlock(RandomGenerator generator) {
 
-        final JPanel chartPanel = getNewChartPanel(Collections.emptyMap());
+        final JPanel chartPanel = getNewChartPanel(Collections.emptyMap(), generator.getClass());
 
         chartBlock.setLayout(new BorderLayout());
         chartBlock.add(chartPanel);
@@ -98,7 +100,7 @@ public class ChartGUI {
         chartBlock.removeAll();
         chartBlock.revalidate();
         chartBlock.setLayout(new BorderLayout());
-        chartBlock.add(getNewChartPanel(newParams));
+        chartBlock.add(getNewChartPanel(newParams, generator.getClass()));
         chartBlock.repaint();
     }
 
@@ -144,11 +146,25 @@ public class ChartGUI {
         return input;
     }
 
-    private static JPanel getNewChartPanel(Map<String, Double> params) {
-        RandomGenerator generator = new LehmerRandomGenerator(params);
+    private static JPanel getNewChartPanel(Map<String, Double> params,
+                                           Class<? extends RandomGenerator> generatorClass) {
+        RandomGenerator generator = getGeneratorInstance(params, generatorClass);
         final double[] values = generator.getStream().limit(GUIConstants.RANDOM_LIMIT).toArray();
         updateLabels(values, generator);
         return ChartService.generateFrequencyHistogramPanel(values);
+    }
+
+    private static RandomGenerator getGeneratorInstance(Map<String, Double> params,
+                                                        Class<? extends RandomGenerator> generatorClass) {
+        RandomGenerator generator = null;
+        try {
+            Constructor<? extends RandomGenerator> cons = generatorClass.getConstructor(Map.class);
+            generator = cons.newInstance(params);
+            } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+                System.out.println("Unable to create instance of " + generatorClass);
+                e.printStackTrace();
+            }
+        return generator;
     }
 
     private static void updateLabels(double[] values, RandomGenerator generator) {
