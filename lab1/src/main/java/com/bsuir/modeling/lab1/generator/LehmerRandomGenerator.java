@@ -1,6 +1,4 @@
-package com.bsuir.modeling.lab1.random;
-
-import com.bsuir.modeling.lab1.constants.GeneratorConstants;
+package com.bsuir.modeling.lab1.generator;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -11,7 +9,7 @@ import java.util.stream.DoubleStream;
 /**
  * Created by Vlad Kanash on 2.9.16.
  */
-public class LehmerRandomGenerator implements RandomGenerator {
+public class LehmerRandomGenerator extends RandomGenerator {
 
 	private final static double INIT_R = 2177;
 	private final static double INIT_A = 811;
@@ -20,20 +18,16 @@ public class LehmerRandomGenerator implements RandomGenerator {
 	private double r;
 	private final double m;
 	private final DoubleUnaryOperator lehmerTransform;
-	private final Map<String, Double> params;
 
     public LehmerRandomGenerator(Map<String, Double> params) {
-		final Map<String, Double> clonedParams = new HashMap<>(params);
+		final Map<String, Double> clonedParams = new HashMap<>();
 
-		if (clonedParams.isEmpty()) {
+		if (params == null || params.size() != 3) {
 			clonedParams.put(GeneratorConstants.R_PARAM_NAME, INIT_R);
 			clonedParams.put(GeneratorConstants.A_PARAM_NAME, INIT_A);
 			clonedParams.put(GeneratorConstants.M_PARAM_NAME, INIT_M);
-		}
-
-		if (clonedParams.size() != 3) {
-			throw new IllegalArgumentException("You must supply 3 input parameters for " +
-					this.getClass().getName() + ", actual value is " + params.size());
+		} else {
+			clonedParams.putAll(params);
 		}
 
 		this.params = clonedParams;
@@ -51,20 +45,8 @@ public class LehmerRandomGenerator implements RandomGenerator {
 		this(Collections.emptyMap());
 	}
 
-    public double nextRandom() {
-    	r = lehmerTransform.applyAsDouble(r);
-    	return r; 
-    }
-
 	@Override
 	public DoubleStream getStream() {
     	return DoubleStream.iterate(r, lehmerTransform).map(e -> e / m).skip(1);
     }
-
-	@Override
-	public Map<String, Double> getInitParams() {
-		return params;
-	}
-
-
 }

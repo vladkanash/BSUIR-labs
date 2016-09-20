@@ -1,13 +1,14 @@
 package com.bsuir.modeling.lab1.math;
 
-import com.bsuir.modeling.lab1.constants.GUIConstants;
-import com.bsuir.modeling.lab1.random.RandomGenerator;
+import com.bsuir.modeling.lab1.generator.RandomGenerator;
 import org.apache.commons.math3.stat.StatUtils;
 import org.apache.commons.math3.util.Pair;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import com.bsuir.modeling.lab1.constants.GUIConstants;
 
 /**
  * Created by Vlad Kanash on 15.9.16.
@@ -43,17 +44,20 @@ public class MathTools {
 
     //TODO optimize
     public static int period(RandomGenerator generator) {
+        int i1, i2 = 0;
         double lastValue = generator.getStream().limit(GUIConstants.PERIOD_LIMIT)
                 .reduce((a, b) -> b).orElse(0);
 
         List<Double> list = generator.getStream().limit(GUIConstants.PERIOD_LIMIT)
                 .boxed().collect(Collectors.toList());
 
-        int i1 = list.indexOf(lastValue);
-        list.set(i1, 0.0);
-        int i2 = list.indexOf(lastValue);
-
-        return i2 - i1;
+        i1 = list.indexOf(lastValue);
+        if (i1 > 0) {
+            list.set(i1, 0.0);
+            i2 = list.indexOf(lastValue);
+            return i2 - i1;
+        }
+        return 0;
     }
 
     //TODO optimize
@@ -62,6 +66,9 @@ public class MathTools {
                 .boxed().collect(Collectors.toList());
 
         int period = period(generator);
+        if (period == 0) {
+            return 0;
+        }
         Double num = 0.0;
 
         for (int i = 0; i < list.size(); i++) {

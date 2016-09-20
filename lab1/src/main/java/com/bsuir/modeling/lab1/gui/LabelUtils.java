@@ -2,7 +2,7 @@ package com.bsuir.modeling.lab1.gui;
 
 import com.bsuir.modeling.lab1.constants.GUIConstants;
 import com.bsuir.modeling.lab1.math.MathTools;
-import com.bsuir.modeling.lab1.random.RandomGenerator;
+import com.bsuir.modeling.lab1.generator.RandomGenerator;
 
 /**
  * Created by Vlad Kanash on 15.9.16.

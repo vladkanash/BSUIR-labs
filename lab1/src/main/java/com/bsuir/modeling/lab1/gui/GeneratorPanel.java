@@ -1,8 +1,7 @@
 package com.bsuir.modeling.lab1.gui;
 
 import com.bsuir.modeling.lab1.constants.GUIConstants;
-import com.bsuir.modeling.lab1.chart.ChartService;
-import com.bsuir.modeling.lab1.random.RandomGenerator;
+import com.bsuir.modeling.lab1.generator.RandomGenerator;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,39 +15,42 @@ import java.util.*;
 /**
  * Created by Vlad Kanash on 12.9.16.
  */
-public class ChartGUI {
+public class GeneratorPanel extends JPanel {
 
-    private final static JLabel expectedValue = new JLabel();
-    private final static JLabel variance = new JLabel();
-    private final static JLabel period = new JLabel();
-    private final static JLabel check = new JLabel();
-    private final static JLabel aperiod = new JLabel();
-    private final static JLabel standardDeviation = new JLabel();
+    private final JLabel expectedValue = new JLabel();
+    private final JLabel variance = new JLabel();
+    private final JLabel period = new JLabel();
+    private final JLabel check = new JLabel();
+    private final JLabel aperiod = new JLabel();
+    private final JLabel standardDeviation = new JLabel();
 
-    private final static JPanel chartBlock = new JPanel();
-    private final static JPanel infoBlock = new JPanel();
-    private final static JPanel inputBlock = new JPanel();
-    private final static JPanel bottomBlock = new JPanel();
+    private final JPanel chartBlock = new JPanel();
+    private final JPanel infoBlock = new JPanel();
+    private final JPanel inputBlock = new JPanel();
+    private final JPanel bottomBlock = new JPanel();
 
-    public static void init(RandomGenerator generator) {
-        SwingUtilities.invokeLater(() -> {
+    public GeneratorPanel(RandomGenerator generator, boolean showStats) {
+        if (showStats) {
             initInfoBlock();
-            initInputBlock(generator);
-            initBottomBlock();
-            initChartBlock(generator);
-            initFrame();
-        });
+        }
+        initInputBlock(generator);
+        initBottomBlock();
+        initChartBlock(generator);
+
+        this.add(chartBlock);
+        this.add(bottomBlock);
+        this.setBackground(Color.WHITE);
+        this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
     }
 
-
-    private static void initBottomBlock() {
+    private void initBottomBlock() {
         bottomBlock.setLayout(new FlowLayout(FlowLayout.LEFT));
         bottomBlock.setBackground(Color.WHITE);
         bottomBlock.add(inputBlock, BorderLayout.WEST);
         bottomBlock.add(infoBlock, BorderLayout.WEST);
     }
 
-    private static void initChartBlock(RandomGenerator generator) {
+    private void initChartBlock(RandomGenerator generator) {
 
         final JPanel chartPanel = getNewChartPanel(Collections.emptyMap(), generator.getClass());
 
@@ -56,7 +58,7 @@ public class ChartGUI {
         chartBlock.add(chartPanel);
     }
 
-    private static void initInputBlock(RandomGenerator generator) {
+    private void initInputBlock(RandomGenerator generator) {
         inputBlock.setLayout(new BoxLayout(inputBlock, BoxLayout.PAGE_AXIS));
         inputBlock.setBackground(Color.WHITE);
         inputBlock.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -81,7 +83,7 @@ public class ChartGUI {
         }
     }
 
-    private static void updateData(RandomGenerator generator) {
+    private void updateData(RandomGenerator generator) {
 
         Set<String> paramNames = generator.getInitParams().keySet();
         Map<String, Double> newParams = new HashMap<>();
@@ -104,7 +106,7 @@ public class ChartGUI {
         chartBlock.repaint();
     }
 
-    private static JPanel initInputPanel(JTextField inputR, String text) {
+    private JPanel initInputPanel(JTextField inputR, String text) {
         final JPanel panel = new JPanel();
         panel.setLayout(new FlowLayout(FlowLayout.LEFT));
         panel.add(inputR);
@@ -114,7 +116,7 @@ public class ChartGUI {
         return panel;
     }
 
-    private static void initInfoBlock() {
+    private void initInfoBlock() {
         infoBlock.setAlignmentX(Component.LEFT_ALIGNMENT);
         infoBlock.setLayout(new BoxLayout(infoBlock, BoxLayout.PAGE_AXIS));
         infoBlock.setBackground(Color.WHITE);
@@ -126,7 +128,7 @@ public class ChartGUI {
         infoBlock.add(aperiod);
     }
 
-    private static void setInputVerifiers() {
+    private void setInputVerifiers() {
         final InputVerifier verifier = new NotEmptyInputVerifier();
         expectedValue.setInputVerifier(verifier);
         variance.setInputVerifier(verifier);
@@ -136,7 +138,7 @@ public class ChartGUI {
         aperiod.setInputVerifier(verifier);
     }
 
-    private static JTextField initTextField(double value) {
+    private JTextField initTextField(double value) {
         final NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.getDefault());
         final DecimalFormat decimalFormat = (DecimalFormat) numberFormat;
         decimalFormat.setGroupingUsed(false);
@@ -146,7 +148,7 @@ public class ChartGUI {
         return input;
     }
 
-    private static JPanel getNewChartPanel(Map<String, Double> params,
+    private JPanel getNewChartPanel(Map<String, Double> params,
                                            Class<? extends RandomGenerator> generatorClass) {
         RandomGenerator generator = getGeneratorInstance(params, generatorClass);
         final double[] values = generator.getStream().limit(GUIConstants.RANDOM_LIMIT).toArray();
@@ -154,38 +156,27 @@ public class ChartGUI {
         return ChartService.generateFrequencyHistogramPanel(values);
     }
 
-    private static RandomGenerator getGeneratorInstance(Map<String, Double> params,
+    private RandomGenerator getGeneratorInstance(Map<String, Double> params,
                                                         Class<? extends RandomGenerator> generatorClass) {
         RandomGenerator generator = null;
         try {
             Constructor<? extends RandomGenerator> cons = generatorClass.getConstructor(Map.class);
             generator = cons.newInstance(params);
-            } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+            } catch (InstantiationException | IllegalAccessException |
+                NoSuchMethodException | InvocationTargetException e) {
+
                 System.out.println("Unable to create instance of " + generatorClass);
                 e.printStackTrace();
             }
         return generator;
     }
 
-    private static void updateLabels(double[] values, RandomGenerator generator) {
+    private void updateLabels(double[] values, RandomGenerator generator) {
         expectedValue.setText(LabelUtils.getExpectedValueLabel(values));
         variance.setText(LabelUtils.getVarianceString(values));
         check.setText(LabelUtils.getCheckString(values));
         aperiod.setText(LabelUtils.getAPeriodString(generator));
         period.setText(LabelUtils.getPeriodString(generator));
         standardDeviation.setText(LabelUtils.getSkoString(values));
-    }
-
-    private static void initFrame() {
-        JFrame frame = new JFrame(GUIConstants.GUI_WINDOW_NAME);
-        frame.setSize(GUIConstants.GUI_WINDOW_WIDTH, GUIConstants.GUI_WINDOW_HEIGHT);
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        frame.setVisible(true);
-
-        Container contentPane = frame.getContentPane();
-        contentPane.add(chartBlock);
-        contentPane.add(bottomBlock);
-        contentPane.setBackground(Color.WHITE);
-        contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.PAGE_AXIS));
     }
 }

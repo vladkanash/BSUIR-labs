@@ -26,4 +26,9 @@ public class GUIConstants {
 
     public final static String BUTTON_LABEL = "Update data";
     public static final String ENTER_LABEL_TEXT = "Enter ";
+
+    public final static String LEHMER_TAB_NAME = "Lehmer";
+    public final static String GAUSSIAN_TAB_NAME = "Gaussian";
+    public final static String EXPONENTIAL_TAB_NAME = "Exponential";
+    public final static String SIMPSON_TAB_NAME = "Simpson";
 }

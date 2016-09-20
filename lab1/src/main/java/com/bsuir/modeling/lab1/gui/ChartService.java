@@ -1,4 +1,4 @@
-package com.bsuir.modeling.lab1.chart;
+package com.bsuir.modeling.lab1.gui;
 
 import com.bsuir.modeling.lab1.constants.GUIConstants;
 import org.jfree.chart.ChartFactory;

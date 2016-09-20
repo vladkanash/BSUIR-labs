@@ -1,7 +1,13 @@
 package com.bsuir.modeling.lab1;
 
-import com.bsuir.modeling.lab1.gui.ChartGUI;
-import com.bsuir.modeling.lab1.random.LehmerRandomGenerator;
+import com.bsuir.modeling.lab1.constants.GUIConstants;
+import com.bsuir.modeling.lab1.generator.ExponentialRandomGenerator;
+import com.bsuir.modeling.lab1.generator.GaussianRandomGenerator;
+import com.bsuir.modeling.lab1.generator.LehmerRandomGenerator;
+import com.bsuir.modeling.lab1.gui.GeneratorPanel;
+
+import javax.swing.*;
+import java.awt.*;
 
 /**
  * Created by Vlad Kanash on 2.9.16.
@@ -9,7 +15,19 @@ import com.bsuir.modeling.lab1.random.LehmerRandomGenerator;
 public class Main {
 
     public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
 
-        ChartGUI.init(new LehmerRandomGenerator());
+            JTabbedPane tabbedPane = new JTabbedPane();
+            tabbedPane.addTab(GUIConstants.LEHMER_TAB_NAME, new GeneratorPanel(new LehmerRandomGenerator(), true));
+            tabbedPane.addTab(GUIConstants.GAUSSIAN_TAB_NAME, new GeneratorPanel(new GaussianRandomGenerator(), false));
+            tabbedPane.addTab(GUIConstants.EXPONENTIAL_TAB_NAME, new GeneratorPanel(new ExponentialRandomGenerator(), false));
+
+            JFrame frame = new JFrame(GUIConstants.GUI_WINDOW_NAME);
+            frame.setSize(GUIConstants.GUI_WINDOW_WIDTH, GUIConstants.GUI_WINDOW_HEIGHT);
+            frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+            frame.setVisible(true);
+            Container contentPane = frame.getContentPane();
+            contentPane.add(tabbedPane);
+        });
     }
 }
