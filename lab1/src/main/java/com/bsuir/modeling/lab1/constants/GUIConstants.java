@@ -3,7 +3,7 @@ package com.bsuir.modeling.lab1.constants;
 /**
  * Created by Vlad Kanash on 12.9.16.
  */
-public class GUIConstants {
+final public class GUIConstants {
 
     private GUIConstants() {}
 
@@ -31,4 +31,7 @@ public class GUIConstants {
     public final static String GAUSSIAN_TAB_NAME = "Gaussian";
     public final static String EXPONENTIAL_TAB_NAME = "Exponential";
     public final static String SIMPSON_TAB_NAME = "Simpson";
+    public final static String UNIFORM_TAB_NAME = "Uniform";
+    public final static String TRIANGLE_TAB_NAME = "Triangle";
+    public final static String GAMMA_TAB_NAME = "Gamma";
 }

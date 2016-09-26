@@ -3,7 +3,7 @@ package com.bsuir.modeling.lab1.generator;
 /**
  * Created by Vlad Kanash on 19.9.16.
  */
-class GeneratorConstants {
+final class GeneratorConstants {
 
     private GeneratorConstants() {}
 
@@ -18,4 +18,9 @@ class GeneratorConstants {
 
     //Exponential generator params
     final static String LAMBDA_PARAM_NAME = "lambda";
+
+    final static String B_PARAM_NAME = "B";
+
+    final static String N_PARAM_NAME = "N";
+
 }
