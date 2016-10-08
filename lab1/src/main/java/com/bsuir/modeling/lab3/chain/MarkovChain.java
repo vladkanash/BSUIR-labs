@@ -1,8 +1,9 @@
 package com.bsuir.modeling.lab3.chain;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
+import com.bsuir.modeling.lab3.chain.element.FinalChainElement;
+import com.bsuir.modeling.lab3.chain.element.MarkovChainElement;
+
+import java.util.*;
 
 /**
  * Created by vladkanash on 6.10.16.
@@ -10,6 +11,7 @@ import java.util.Map;
 public class MarkovChain {
 
     private final LinkedList<MarkovChainElement> elements = new LinkedList<>();
+    private final static FinalChainElement finalElement = new FinalChainElement("finalElement");
 
     public void appendElement(MarkovChainElement element) {
         if (null != element) {
@@ -17,12 +19,14 @@ public class MarkovChain {
                 element.setPrevious(this.elements.getLast());
                 this.elements.getLast().setNext(element);
             }
+            element.setNext(finalElement);
             this.elements.addLast(element);
         }
     }
 
     public void changeState() {
-        elements.forEach(MarkovChainElement::changeState);
+        Iterator<MarkovChainElement> descending = elements.descendingIterator();
+        descending.forEachRemaining(MarkovChainElement::changeState);
     }
 
     public Map<String, Integer> getStates() {
