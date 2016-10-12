@@ -7,11 +7,13 @@ import java.util.Random;
  */
 public class BlockingGeneratorChainElement extends MarkovChainElement {
 
+    private final static int STATE_BLOCKED = 1;
+    private final static int STATE_NOT_BLOCKED = 0;
+
     private final double probability;
     private final Random random = new Random();
 
-    public final static int STATE_BLOCKED = 1;
-    public final static int STATE_NOT_BLOCKED = 0;
+    private boolean storedValue = false;
 
     public BlockingGeneratorChainElement(String name, double probability) {
         super(name, STATE_NOT_BLOCKED);
@@ -32,12 +34,21 @@ public class BlockingGeneratorChainElement extends MarkovChainElement {
     @Override
     public void changeState() {
         final MarkovChainElement next = getNext();
+        final boolean generate = random.nextDouble() >= probability;
         if (next == null) {
             return;
         }
-        state = next.isBlocked() ? STATE_BLOCKED : STATE_NOT_BLOCKED;
-        if (!next.isBlocked() && random.nextDouble() >= probability) {
-            next.addTask();
+        if (!storedValue && generate) {
+            if (!next.isBlocked()) {
+                next.addTask();
+            } else {
+                storedValue = true;
+            }
         }
+        if (!next.isBlocked() && storedValue) {
+            next.addTask();
+            storedValue = false;
+        }
+        state = storedValue ? STATE_BLOCKED : STATE_NOT_BLOCKED;
     }
 }

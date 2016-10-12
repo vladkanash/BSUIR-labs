@@ -13,7 +13,7 @@ import java.util.*;
  */
 public class Main {
 
-    private static final int STEPS = 9999;
+    private static final int STEPS = 10000;
 
     public static void main(String[] args) {
 
@@ -21,12 +21,14 @@ public class Main {
         final MarkovChain chain = new MarkovChain();
         chain.appendElement(new BlockingGeneratorChainElement("GEN1", 0.5));
         chain.appendElement(new QueueChainElement("Q1", 2));
-        chain.appendElement(new RefusingProcessorChainElement("P1", 0.5));
+        chain.appendElement(new RefusingProcessorChainElement("P1", 0.48));
         chain.appendElement(new ProcessorChainElement("P2", 0.5));
 
         for (int i = 0; i < STEPS; i++) {
-            snapshots.merge(new MarkovChainSnapshot(chain), 1, (a, b) -> a + 1);
+            MarkovChainSnapshot snap = new MarkovChainSnapshot(chain);
+            snapshots.merge(snap, 1, (a, b) -> a + 1);
             chain.changeState();
+//            System.out.println(snap);
         }
 
         List<Map.Entry<MarkovChainSnapshot, Integer>> list = new ArrayList<>(snapshots.entrySet());

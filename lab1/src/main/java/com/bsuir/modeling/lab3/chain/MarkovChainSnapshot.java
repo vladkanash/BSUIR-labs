@@ -53,7 +53,7 @@ public class MarkovChainSnapshot {
         final StringBuilder builder = new StringBuilder();
         this.snapshot.forEach((k, v) -> {
             builder.append(v);
-            builder.append("=");
+            builder.append("-");
         });
         return builder.deleteCharAt(builder.length() - 1).toString();
     }
