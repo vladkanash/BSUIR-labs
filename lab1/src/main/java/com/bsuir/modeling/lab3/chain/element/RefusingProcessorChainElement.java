@@ -8,11 +8,19 @@ public class RefusingProcessorChainElement extends ProcessorChainElement {
         super(name, probability);
     }
 
+    private int refusedCount = 0;
+
+    public int getRefusedCount() {
+        return refusedCount;
+    }
+
     @Override
     public void changeState() {
         if (isBlocked() && random.nextDouble() > probability) {
             if (getNext() != null && !getNext().isBlocked()) {
                 getNext().addTask();
+            } else {
+                refusedCount++;
             }
             this.setBlocked(false);
             this.state = STATE_FREE;

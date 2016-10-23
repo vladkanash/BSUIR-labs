@@ -8,7 +8,6 @@ import java.util.Random;
 public class ProcessorChainElement extends MarkovChainElement {
 
     final double probability;
-    Random random = new Random();
 
     protected final static int STATE_BUSY = 1;
     protected final static int STATE_FREE = 0;

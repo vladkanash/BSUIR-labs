@@ -1,5 +1,7 @@
 package com.bsuir.modeling.lab3.chain.element;
 
+import java.util.Random;
+
 /**
  * Created by vladkanash on 6.10.16.
  */
@@ -7,13 +9,19 @@ public abstract class MarkovChainElement {
 
     protected int state;
     protected final String name;
+    protected Random random;
     private MarkovChainElement next;
     private MarkovChainElement previous;
     private boolean blocked = false;
 
+
     MarkovChainElement(final String name, final int initialState) {
         this.state = initialState;
         this.name = name;
+    }
+
+    public void setRandom(Random random) {
+        this.random = random;
     }
 
     public void setNext(MarkovChainElement next) {

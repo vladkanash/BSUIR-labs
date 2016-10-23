@@ -12,6 +12,7 @@ public class MarkovChain {
 
     private final LinkedList<MarkovChainElement> elements = new LinkedList<>();
     private final static FinalChainElement finalElement = new FinalChainElement("finalElement");
+    private final Random random = new Random();
 
     public void appendElement(MarkovChainElement element) {
         if (null != element) {
@@ -20,6 +21,7 @@ public class MarkovChain {
                 this.elements.getLast().setNext(element);
             }
             element.setNext(finalElement);
+            element.setRandom(random);
             this.elements.addLast(element);
         }
     }
