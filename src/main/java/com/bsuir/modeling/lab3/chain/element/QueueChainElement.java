@@ -11,9 +11,9 @@ public class QueueChainElement extends MarkovChainElement {
 
     private final int capacity;
     private int tasksCount = 0;
-    private int totalTime = 0;
+    protected int totalTime = 0;
 
-    private Queue<Integer> queue = new ArrayDeque<>();
+    protected Queue<Integer> queue = new ArrayDeque<>();
 
     public int getTasksCount() {
         return tasksCount;

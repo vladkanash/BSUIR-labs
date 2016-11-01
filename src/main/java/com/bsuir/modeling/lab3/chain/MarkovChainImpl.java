@@ -8,7 +8,7 @@ import java.util.*;
 /**
  * Created by vladkanash on 6.10.16.
  */
-public class MarkovChain {
+public class MarkovChainImpl implements Chain {
 
     private final LinkedList<MarkovChainElement> elements = new LinkedList<>();
     private final static FinalChainElement finalElement = new FinalChainElement("finalElement");
@@ -26,12 +26,14 @@ public class MarkovChain {
         }
     }
 
+    @Override
     public void changeState() {
         Iterator<MarkovChainElement> descending = elements.descendingIterator();
         descending.forEachRemaining(MarkovChainElement::changeState);
     }
 
-    public Map<String, Integer> getStates() {
+    @Override
+    public Map<String, Integer> getState() {
         Map<String, Integer> states = new HashMap<>();
         elements.forEach(e -> states.put(e.getName(), e.getState()));
         return states;

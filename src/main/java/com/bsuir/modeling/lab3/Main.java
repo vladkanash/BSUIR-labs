@@ -48,7 +48,7 @@ public class Main {
         }
 
         final Map<MarkovChainSnapshot, Integer> snapshots = new HashMap<>();
-        final MarkovChain chain = new MarkovChain();
+        final MarkovChainImpl chain = new MarkovChainImpl();
         double queueLength = 0;
         final QueueChainElement queue = new QueueChainElement("Q1", iq);
         final RefusingProcessorChainElement refProc = new RefusingProcessorChainElement("P1", ip1);

@@ -15,7 +15,7 @@ public abstract class MarkovChainElement {
     private boolean blocked = false;
 
 
-    MarkovChainElement(final String name, final int initialState) {
+    protected MarkovChainElement(final String name, final int initialState) {
         this.state = initialState;
         this.name = name;
     }

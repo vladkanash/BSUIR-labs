@@ -20,14 +20,13 @@ public class MarkovChainSnapshot {
         stateNumbers.put(Arrays.asList(0, 2, 1, 1), "P7");
         stateNumbers.put(Arrays.asList(1, 2, 1, 0), "P8");
         stateNumbers.put(Arrays.asList(1, 2, 1, 1), "P9");
-
     }
 
     private LinkedHashMap<String, Integer> snapshot = new LinkedHashMap<>();
 
-    public MarkovChainSnapshot(MarkovChain chain) {
+    public MarkovChainSnapshot(MarkovChainImpl chain) {
         if (null != chain) {
-            snapshot.putAll(chain.getStates());
+            snapshot.putAll(chain.getState());
         }
     }
 
