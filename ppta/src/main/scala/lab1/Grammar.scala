@@ -7,11 +7,11 @@ class Grammar(val terminals: Set[Symbol],
 
   require((terminals & nonTerminals).isEmpty,
     "Duplicate symbols found in terminals and non terminals")
-  require(!terminals.contains(startSymbol) && !nonTerminals.contains(startSymbol),
-    "Start symbol should not appear in terminals or non terminals")
-  require(rules forall (rule => rule.left.allIn(terminals ++ nonTerminals + startSymbol)),
+  require(nonTerminals.contains(startSymbol),
+    "Start symbol should be one of the nonTerminals")
+  require(rules forall (rule => rule.left.allIn(terminals ++ nonTerminals)),
     "Incorrect symbol found in rule left part")
-  require(rules forall (rule => rule.right.allIn(terminals ++ nonTerminals + startSymbol)),
+  require(rules forall (rule => rule.right.allIn(terminals ++ nonTerminals)),
     "Incorrect symbol found in rule right part")
 
   lazy val grammarType: GrammarType.Value =

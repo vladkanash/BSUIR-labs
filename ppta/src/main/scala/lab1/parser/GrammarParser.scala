@@ -20,7 +20,7 @@ object GrammarParser extends RegexParsers with RuleParser {
   override val whiteSpace: Regex = """[ \t]+""".r
 
   def grammar: Parser[Grammar] = (terminals <~ eol) ~ (nonTerminals <~ eol) ~ (rules <~ eol) ~ (startSymbol <~ eol) ^^ {
-    case ((terms ~ nonTerms) ~ rls) ~ start => new Grammar(terms.toSet, nonTerms.toSet, rls.toSet, start)
+    case ((terms ~ nonTerms) ~ rls) ~ start => new Grammar(terms.toSet, nonTerms.toSet + start, rls.toSet, start)
   }
 
   def rules: Parser[List[Rule]] = rulesStart ~> rule ~ rep(ruleSep ~> rule) <~ opt(ruleSep) ^^
