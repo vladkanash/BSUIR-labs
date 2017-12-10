@@ -12,20 +12,21 @@ class FiniteStateMachine(val grammar: Grammar) {
     .filter(_.right.len == 1)
     .map(rule => Rule(rule.left, rule.right.contents + additionalNonTerminal))
 
-  val states: Set[State] = grammar.nonTerminals + additionalNonTerminal
+  val states: Set[State] = if (extendedRules.size > grammar.rules.size)
+    grammar.nonTerminals + additionalNonTerminal else grammar.nonTerminals
 
   val inputs: Set[Symbol] = grammar.terminals
 
-  val startStates: Set[State] = Set(grammar.startSymbol)
+  val startState: State = grammar.startSymbol
 
-  val transitions: Set[Transition] = extendedRules
+  val transitions: Set[Transition] = extendedRules.filter(_.right.len == 2)
     .map(r => Transition(r.left.contents.head, r.right.contents.head, r.right.contents.last))
 
   val endStates: Set[State] = extendedRules
     .filter(rule => rule.right.len == 2 && extendedRules.contains(Rule(rule.left, rule.right.contents.take(1))))
     .map(rule => rule.right.contents.last)
 
-  def hasExtendedRule(tested: Rule, rules: Set[Rule]): Boolean =
+  private def hasExtendedRule(tested: Rule, rules: Set[Rule]): Boolean =
     rules.exists(r =>
       r.left.contents == tested.left.contents &&
         r.right.contents.drop(1) == tested.right.contents)
@@ -34,6 +35,6 @@ class FiniteStateMachine(val grammar: Grammar) {
     s"""Q (States): ${states.mkString}
        |T (Input Symbols): ${inputs.mkString}
        |F (Transitions): ${transitions.mkString("\n\t", ";\n\t", "")}
-       |H (Start states): ${startStates.mkString}
+       |H (Start states): $startState
        |Z (End states): ${endStates.mkString}""".stripMargin
 }
