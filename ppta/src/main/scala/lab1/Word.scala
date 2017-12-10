@@ -3,25 +3,35 @@ package lab1
 sealed trait Word {
   def len: Int
   def contents: Set[Symbol]
+
+  def allIn(seq: Set[Symbol]): Boolean = (contents -- seq).isEmpty
+  def hasAnyIn(seq: Set[Symbol]): Boolean = (contents & seq).nonEmpty
 }
 
-case class EmptyWord() extends Word {
+case object EmptyWord extends Word {
+  private val emptyWordRep = 'ℰ'
+
   override val len = 0
-  override val contents: Set[Nothing] = Set.empty
+  override val contents: Set[Symbol] = Set.empty
+
+  override val toString: String = emptyWordRep.toString
 }
 
 case class SymbolicWord(value: CharSequence) extends Word {
   require(value.length() > 0, "word cannot be null")
 
   override val len: Int = value.length()
-  override val contents: CharSequence = value
+  override val contents: Set[Symbol] = value.toString.map(Symbol).toSet
 
-  override def toString: String = value.toString
+  override val toString: String = value.toString
 }
 
 object Word {
-  val empty: Word = EmptyWord()
+  val empty: Word = EmptyWord
   def apply(value: CharSequence) = SymbolicWord(value)
+
 }
+
+
 
 

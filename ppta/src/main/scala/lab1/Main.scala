@@ -4,10 +4,12 @@ import java.io.FileReader
 
 import lab1.parser.GrammarParser
 
-object Main {
-  def main(args: Array[String]): Unit = {
-    print(GrammarParser.parse(new FileReader(args(0))))
+object Main extends App {
 
+  override def main(args: Array[String]): Unit = {
+    val grammar = GrammarParser.parse(new FileReader(args(0)))
+    println(grammar)
+    println(grammar.get.grammarType)
   }
 
 }
