@@ -9,7 +9,7 @@ sealed trait Word {
 }
 
 case object EmptyWord extends Word {
-  private val emptyWordRep = 'ℰ'
+  private val emptyWordRep = 'E'
 
   override val len = 0
   override val contents: Set[Symbol] = Set.empty
