@@ -1,6 +1,8 @@
 package lab2
 
-import lab1.{Grammar, GrammarType, Rule, Symbol}
+import lab1.{EmptyWord, Grammar, GrammarType, Rule, Symbol}
+
+import scala.language.postfixOps
 
 class FiniteStateMachine(val grammar: Grammar) {
   require(grammar.grammarType == GrammarType.Regular, "Type must be regular to build state machine")
@@ -24,12 +26,16 @@ class FiniteStateMachine(val grammar: Grammar) {
 
   val endStates: Set[State] = extendedRules
     .filter(rule => rule.right.len == 2 && extendedRules.contains(Rule(rule.left, rule.right.contents.take(1))))
-    .map(rule => rule.right.contents.last)
+    .map(rule => rule.right.contents.last) ++ additionalEndState
 
   private def hasExtendedRule(tested: Rule, rules: Set[Rule]): Boolean =
     rules.exists(r =>
       r.left.contents == tested.left.contents &&
         r.right.contents.drop(1) == tested.right.contents)
+
+  private def additionalEndState: Set[Symbol] =
+    if (grammar.rules.contains(Rule(Set(grammar.startSymbol), EmptyWord)))
+      Set(grammar.startSymbol) else Set.empty
 
   override val toString: String =
     s"""Q (States): ${states.mkString}
