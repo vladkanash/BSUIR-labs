@@ -10,7 +10,7 @@ trait RuleParser extends RegexParsers {
   val sep = "|"
   val arrow = "=>"
   val emptyWord = "ℰ"
-  val nonEmptyWord: Regex = "[a-zA-Z]+".r
+  val nonEmptyWord: Regex = "[-+a-zA-Z]+".r
 
   def rule: Parser[List[Rule]] = (word <~ arrow) ~ right ^^ (res => res._2.map(right => Rule(res._1, right)))
 
