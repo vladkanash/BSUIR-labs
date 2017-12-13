@@ -14,17 +14,17 @@ class FiniteStateMachine(val grammar: Grammar) {
     .filter(_.right.len == 1)
     .map(rule => Rule(rule.left, rule.right.contents + additionalNonTerminal))
 
-  val states: Set[State] = if (extendedRules.size > grammar.rules.size)
+  def states: Set[State] = if (extendedRules.size > grammar.rules.size)
     grammar.nonTerminals + additionalNonTerminal else grammar.nonTerminals
 
-  val inputs: Set[Symbol] = grammar.terminals
+  def inputs: Set[Symbol] = grammar.terminals
 
-  val startState: State = grammar.startSymbol
+  def startState: State = grammar.startSymbol
 
-  val transitions: Set[Transition] = extendedRules.filter(_.right.len == 2)
+  def transitions: Set[Transition] = extendedRules.filter(_.right.len == 2)
     .map(r => Transition(r.left.contents.head, r.right.contents.head, r.right.contents.last))
 
-  val endStates: Set[State] = extendedRules
+  def endStates: Set[State] = extendedRules
     .filter(rule => rule.right.len == 2 && extendedRules.contains(Rule(rule.left, rule.right.contents.take(1))))
     .map(rule => rule.right.contents.last) ++ additionalEndState
 
@@ -37,7 +37,7 @@ class FiniteStateMachine(val grammar: Grammar) {
     if (grammar.rules.contains(Rule(Set(grammar.startSymbol), EmptyWord)))
       Set(grammar.startSymbol) else Set.empty
 
-  override val toString: String =
+  override def toString: String =
     s"""Q (States): ${states.mkString}
        |T (Input Symbols): ${inputs.mkString}
        |F (Transitions): ${transitions.mkString("\n\t", ";\n\t", "")}
