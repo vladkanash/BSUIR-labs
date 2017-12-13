@@ -7,9 +7,11 @@ import scala.language.postfixOps
 class FiniteStateMachine(val grammar: Grammar) {
   require(grammar.grammarType == GrammarType.Regular, "Type must be regular to build state machine")
 
-  private val additionalNonTerminal: Char = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" diff grammar.nonTerminals.mkString head
+  protected val newStateNames: String = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" diff grammar.nonTerminals.mkString
 
-  private val extendedRules: Set[Rule] = grammar.rules ++ grammar.rules
+  private def additionalNonTerminal: Char = newStateNames head
+
+  private def extendedRules: Set[Rule] = grammar.rules ++ grammar.rules
     .filterNot(rule => hasExtendedRule(rule, grammar.rules))
     .filter(_.right.len == 1)
     .map(rule => Rule(rule.left, rule.right.contents + additionalNonTerminal))

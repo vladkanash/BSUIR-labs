@@ -2,8 +2,11 @@ package lab1
 
 import java.io.FileReader
 
+import collection.JavaConverters._
 import lab1.parser.GrammarParser
 import lab2.{Deterministic, FiniteStateMachine}
+import viewer.StateMachineGraphViewer
+
 object Main extends App {
 
   override def main(args: Array[String]): Unit = {
@@ -12,6 +15,12 @@ object Main extends App {
 
     val machine = new FiniteStateMachine(grammar.get) with Deterministic
     println(machine)
+
+    new StateMachineGraphViewer(
+      machine.transitions.asJava,
+      machine.states.asJava,
+      machine.startState,
+      machine.endStates.asJava)
   }
 
 }

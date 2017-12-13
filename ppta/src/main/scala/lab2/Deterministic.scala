@@ -7,7 +7,9 @@ trait Deterministic extends FiniteStateMachine {
   type TransitionsEntry = Map[Symbol, Set[State]]
   type TransitionsMap = Map[Set[State], TransitionsEntry]
 
-  private val determinationMap: TransitionsMap = {
+  protected val extendedStateNames: String = newStateNames diff super.states.mkString
+
+  private def determinationMap: TransitionsMap = {
     def getTransitionsColumn(dStates: Set[State]): TransitionsEntry =
       inputs.map(input => input -> dStates.flatMap(getReachableStates(_, input))).toMap
 
@@ -23,10 +25,8 @@ trait Deterministic extends FiniteStateMachine {
 
     createNewStates(Map.empty, Set(Set(startState)))
   }
-
-  private val rawNewStates = determinationMap.keySet.filter(_.size > 1)
-  private val newStateNames = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" diff super.states.mkString take rawNewStates.size
-  private val newStatesMap = rawNewStates.zip(newStateNames.map(State(_))).toMap.withDefault(_.head)
+  private def rawNewStates = determinationMap.keySet.filter(_.size > 1)
+  private def newStatesMap = rawNewStates.zip(extendedStateNames.map(State(_))).toMap.withDefault(_.head)
 
   override def states: Set[State] = super.states ++ rawNewStates.map(newStatesMap)
 
