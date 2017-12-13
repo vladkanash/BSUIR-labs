@@ -1,0 +1,4 @@
+Terminals: ab
+NonTerminals: AB
+Rules: S => aB|aA; B => bB|a; A => aA|b;
+StartSymbol: S
