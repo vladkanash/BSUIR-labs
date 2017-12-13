@@ -1,0 +1,28 @@
+node {
+    size-mode: fit;
+    size: 30px;
+    text-size: 20px;
+}
+
+node.start {
+    fill-color: lightgreen;
+}
+
+node.end {
+    fill-color: red;
+}
+
+node.looped {
+    fill-color: #EEE;
+    stroke-mode: plain;
+    stroke-width: 6px;
+    stroke-color: blue;
+}
+
+edge {
+    text-size: 20px;
+    shape: cubic-curve;
+    arrow-shape: arrow;
+    arrow-size: 20px, 4px;
+}
+
