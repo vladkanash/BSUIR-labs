@@ -1,44 +1,20 @@
 package lab2
 
-import lab1.{EmptyWord, Grammar, GrammarType, Rule, Symbol}
+import lab1.Symbol
 
-import scala.language.postfixOps
+class FiniteStateMachine(params: StateMachineParams) {
 
-class FiniteStateMachine(val grammar: Grammar) {
-  require(grammar.grammarType == GrammarType.Regular, "Type must be regular to build state machine")
+  def this(states: Set[State], startState: State, endStates: Set[State],
+           inputs: Set[Symbol], transitions: Set[Transition]) =
+    this(StateMachineParams(states, startState, endStates, inputs, transitions))
 
-  protected def newStateNames: String = stateMachineNewStateNames
-  private val stateMachineNewStateNames = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" diff grammar.nonTerminals.mkString
+  def states: Set[State] = params.states
+  def startState: State = params.startState
+  def endStates: Set[State] = params.endStates
+  def inputs: Set[Symbol] = params.inputs
+  def transitions: Set[Transition] = params.transitions
 
-  private val additionalNonTerminal: Char = stateMachineNewStateNames head
-
-  private val extendedRules: Set[Rule] = grammar.rules ++ grammar.rules
-    .filterNot(rule => hasExtendedRule(rule, grammar.rules))
-    .filter(_.right.len == 1)
-    .map(rule => Rule(rule.left, rule.right.contents + additionalNonTerminal))
-
-  private def hasExtendedRule(tested: Rule, rules: Set[Rule]): Boolean =
-    rules.exists(r =>
-      r.left.contents == tested.left.contents &&
-        r.right.contents.drop(1) == tested.right.contents)
-
-  private val additionalEndState: Set[Symbol] =
-    if (grammar.rules.contains(Rule(Set(grammar.startSymbol), EmptyWord)))
-      Set(grammar.startSymbol) else Set.empty
-
-  def states: Set[State] = if (extendedRules.size > grammar.rules.size)
-    grammar.nonTerminals + additionalNonTerminal else grammar.nonTerminals
-
-  def inputs: Set[Symbol] = grammar.terminals
-
-  def startState: State = grammar.startSymbol
-
-  def transitions: Set[Transition] = extendedRules.filter(_.right.len == 2)
-    .map(r => Transition(r.left.contents.head, r.right.contents.head, r.right.contents.last))
-
-  def endStates: Set[State] = extendedRules
-    .filter(rule => rule.right.len == 2 && extendedRules.contains(Rule(rule.left, rule.right.contents.take(1))))
-    .map(rule => rule.right.contents.last) ++ additionalEndState
+  protected def newStateNames: String = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" diff params.states.mkString
 
   override def toString: String =
     s"""Q (States): ${states.mkString}
