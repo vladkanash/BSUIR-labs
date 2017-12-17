@@ -3,9 +3,9 @@ package lab1
 import java.io.FileReader
 
 import collection.JavaConverters._
-import lab1.parser.GrammarParser
 import lab2.{Deterministic, FiniteStateMachine}
 import lab3.Minimized
+import parser.grammar.GrammarParser
 import viewer.StateMachineGraphViewer
 
 object Main extends App {

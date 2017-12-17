@@ -1,4 +1,4 @@
-package lab1.parser
+package parser.grammar
 
 import java.io.FileReader
 
