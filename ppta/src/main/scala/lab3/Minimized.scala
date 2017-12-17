@@ -5,14 +5,12 @@ import lab1.Symbol
 
 trait Minimized extends FiniteStateMachine {
 
-  override def newStateNames: String = minimizedNewStateNames
-
   private val minimizedNewStateNames = super.newStateNames diff super.states.mkString
 
   private val reachableStates: Set[State] = {
 
     def extendStates(reachedStates: Set[State], newStates: Set[State]): Set[State] = {
-        val reached = newStates.flatMap(state =>
+      val reached = newStates.flatMap(state =>
         super.transitions.filter(_.inputState == state).map(_.outputState)) ++ newStates -- reachedStates
       if (reached.isEmpty) reachedStates else extendStates(reachedStates ++ reached, reached)
     }
@@ -40,6 +38,8 @@ trait Minimized extends FiniteStateMachine {
       .flatMap(states => states._1.map(s => (s, states._2)))
       .toMap.withDefault(identity)
   }
+
+  override def newStateNames: String = minimizedNewStateNames
 
   override def states: Set[State] = super.states intersect reachableStates map uniqueStatesMap
 

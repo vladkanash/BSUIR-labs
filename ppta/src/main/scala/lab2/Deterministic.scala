@@ -7,7 +7,6 @@ trait Deterministic extends FiniteStateMachine {
   type TransitionsEntry = Map[Symbol, Set[State]]
   type TransitionsMap = Map[Set[State], TransitionsEntry]
 
-  override def newStateNames: String = deterministicNewStateNames
   private val deterministicNewStateNames = super.newStateNames diff super.states.mkString
 
   private val determinationMap: TransitionsMap = {
@@ -26,8 +25,12 @@ trait Deterministic extends FiniteStateMachine {
 
     createNewStates(Map.empty, Set(Set(super.startState)))
   }
+
   private val rawNewStates = determinationMap.keySet.filter(_.size > 1)
+
   private val newStatesMap = rawNewStates.zip(deterministicNewStateNames.map(State(_))).toMap.withDefault(_.head)
+
+  override def newStateNames: String = deterministicNewStateNames
 
   override def states: Set[State] = super.states ++ rawNewStates.map(newStatesMap)
 
@@ -37,5 +40,4 @@ trait Deterministic extends FiniteStateMachine {
   override def transitions: Set[Transition] = determinationMap.flatMap(entry =>
       entry._2.filterNot(cell => cell._2.isEmpty)
         .map(cell => Transition(newStatesMap(entry._1), cell._1, newStatesMap(cell._2)))).toSet
-
 }
