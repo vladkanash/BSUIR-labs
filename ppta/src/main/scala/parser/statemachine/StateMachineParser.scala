@@ -13,7 +13,7 @@ object StateMachineParser extends RegexParsers with TransitionParser {
   val eol = sys.props("line.separator")
 
   val startStateRegexp: Regex = "[A-Z]{1}".r
-  val symbolsRegexp: Regex = "[a-z]+".r
+  val symbolsRegexp: Regex = "[~&a-z]+".r
   val stateSeq: Regex = "[A-Z]+".r
 
   val transitionSep = ";"

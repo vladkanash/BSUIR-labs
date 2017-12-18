@@ -11,7 +11,7 @@ trait TransitionParser extends RegexParsers {
   val arrow = "=>"
   val leftParenthesis = "("
   val rightParenthesis = ")"
-  val nonEmptySymbol: Regex = "[-+a-z]{1}".r
+  val nonEmptySymbol: Regex = "[~&a-z]{1}".r
   val nonEmptyState: Regex = "[A-Z]{1}".r
 
   def transition: Parser[Transition] = (state ~ symbol <~ arrow) ~ state ^^ {
