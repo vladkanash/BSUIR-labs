@@ -12,9 +12,7 @@ object StateMachineParser extends RegexParsers with TransitionParser {
 
   val eol = sys.props("line.separator")
 
-  val startStateRegexp: Regex = "[A-Z]{1}".r
-  val symbolsRegexp: Regex = "[~&a-z]+".r
-  val stateSeq: Regex = "[A-Z]+".r
+  val symbolsSeq: Regex = ".+".r
 
   val transitionSep = ";"
   val statesStart = "States:"
@@ -36,13 +34,13 @@ object StateMachineParser extends RegexParsers with TransitionParser {
       StateMachineParams(states, startState, endStates, symbols, transitions)
   }
 
-  def states: Parser[Set[State]] = statesStart ~> stateSeq ^^ (_.toSet.map(State(_)))
+  def states: Parser[Set[State]] = statesStart ~> symbolsSeq ^^ (_.toSet.map(State(_)))
 
-  def startState: Parser[State] = startStateStart ~> startStateRegexp ^^ (res => State(res.charAt(0)))
+  def startState: Parser[State] = startStateStart ~> nonEmptySymbol ^^ (res => State(res.charAt(0)))
 
-  def endStates: Parser[Set[State]] = endStatesStart ~> stateSeq ^^ (_.toSet.map(State(_)))
+  def endStates: Parser[Set[State]] = endStatesStart ~> symbolsSeq ^^ (_.toSet.map(State(_)))
 
-  def symbols: Parser[Set[Symbol]] = symbolsStart ~> symbolsRegexp ^^ (_.toSet.map(Symbol(_)))
+  def symbols: Parser[Set[Symbol]] = symbolsStart ~> symbolsSeq ^^ (_.toSet.map(Symbol(_)))
 
   def transitions: Parser[Set[Transition]] =
     transitionStart ~> opt(eol) ~> transition ~ rep(transitionSep ~> opt(eol) ~> transition) <~ opt(transitionSep) ^^

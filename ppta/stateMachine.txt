@@ -1,7 +1,7 @@
 States: ABCDEFGHIJ
 Start state: A
 End states: I
-Input symbols: abcd~t&
+Input symbols: abcd~&┴
 Transitions:
     A(c) => C;
     B(d) => C;
@@ -10,11 +10,11 @@ Transitions:
     C(c) => F;
     D(d) => C;
     E(~) => B;
-    E(t) => I;
+    E(┴) => I;
     F(&) => C;
-    F(t) => I;
+    F(┴) => I;
     G(~) => D;
-    G(t) => I;
+    G(┴) => I;
     H(a) => I;
     H(b) => E;
     J(a) => G;
