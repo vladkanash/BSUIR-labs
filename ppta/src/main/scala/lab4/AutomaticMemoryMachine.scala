@@ -1,5 +1,7 @@
 package lab4
 
+import java.util.regex.Pattern
+
 import lab1.{Grammar, GrammarType, Symbol}
 import lab2.State
 
@@ -16,6 +18,68 @@ class AutomaticMemoryMachine(val states: Set[State],
 
   def parse(input: String): Unit = {
 
+    def updateConfiguration(currentLevelConfigs: Set[Configuration], processedConfigs: Set[Configuration]): Boolean = {
+
+      def updateStoreWithRuleTransition(store: String, tr: StoreTransition): String = store
+        .replaceFirst(Pattern.quote(tr.inputStoreSymbols.mkString), tr.outputStoreSymbol.mkString)
+
+      def finalConfig(config: Configuration): Boolean =
+        config.input.head == config.store.head &&
+        config.input.length == config.store.length &&
+        config.input.length == 1
+
+      val childConfigs: Set[Configuration] = {
+
+        val reachableRuleConfigs = currentLevelConfigs
+          .flatMap { config =>
+            ruleTransitions
+              .filter(tr => config.store.head == tr.inputStoreSymbols.mkString.head)
+              .map { tr =>
+                Configuration(
+                  config.index + 1,
+                  tr.outputState,
+                  config.input,
+                  updateStoreWithRuleTransition(config.store, tr),
+                  Some(config))
+              }
+          }
+
+        val reachableTerminalConfigs = currentLevelConfigs
+          .filterNot(config => config.input.isEmpty || config.store.isEmpty)
+          .filter(config => config.input.head == config.store.head)
+          .flatMap { config =>
+            terminalTransitions
+              .filter(tr => tr.inputSymbol.value == config.store.head)
+              .map { tr =>
+                Configuration(
+                  config.index + 1,
+                  tr.outputState,
+                  config.inputTail,
+                  config.storeTail,
+                  Some(config))
+              }
+          }
+
+        reachableRuleConfigs ++ reachableTerminalConfigs
+      }
+
+//      currentLevelConfigs foreach println
+
+      if (childConfigs.isEmpty) {
+        false
+      } else if (currentLevelConfigs.exists(finalConfig)) {
+        currentLevelConfigs.find(finalConfig).foreach(config => config.printParentList())
+        true
+      } else
+        updateConfiguration(childConfigs -- processedConfigs, processedConfigs ++ currentLevelConfigs)
+    }
+
+    val startConfig = Configuration(0, startState, input, startStoreSymbol.toString, None)
+    if (updateConfiguration(Set(startConfig), Set.empty)) {
+      println("SUCCESS! This input string was successfully parsed with state machine")
+    } else {
+      println("ERROR! This input string cannot be parsed with this state machine")
+    }
   }
 
   override val toString: String =

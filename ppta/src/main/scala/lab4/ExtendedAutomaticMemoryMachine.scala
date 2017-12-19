@@ -19,37 +19,61 @@ class ExtendedAutomaticMemoryMachine (states: Set[State],
 
   override def parse(input: String): Unit = {
 
-    println(f"  №             Input   State             Store")
+    def updateConfiguration(currentLevelConfigs: Set[Configuration], processedConfigs: Set[Configuration]): Boolean = {
 
-    def updateConfiguration(confIdx: Int, state: State, input: String, store: String): Boolean = {
-      println(f"$confIdx%3s [ $input%15s | $state%5s | ${store.mkString.reverse}%15s ]")
+      def updateStoreWithRuleTransition(store: String, tr: StoreTransition): String = store.mkString
+        .replaceFirst(Pattern.quote(tr.inputStoreSymbols.reverse.mkString), tr.outputStoreSymbol.mkString)
 
-      def isFinal(tr: StoreTransition) = endStates contains tr.outputState
+      def finalConfig(config: Configuration) =
+        (endStates contains config.state) && config.input.isEmpty
 
-      if (endStates contains state) true else {
+      val childConfigs: Set[Configuration] = {
 
-        ruleTransitions
-          .find(tr =>
-            store.startsWith(tr.inputStoreSymbols.mkString.reverse) && !isFinal(tr) ||
-            input.isEmpty && isFinal(tr)) match {
-
-            case Some(tr) =>
-                val updatedStore = store.mkString
-                  .replaceFirst(Pattern.quote(tr.inputStoreSymbols.reverse.mkString), tr.outputStoreSymbol.mkString)
-                updateConfiguration(confIdx + 1, tr.outputState, input, updatedStore)
-
-            case None =>
-              if (input.isEmpty) false else {
-                terminalTransitions.find(tr => tr.inputSymbol.value == input.head) match {
-                  case Some(tr) => updateConfiguration(confIdx + 1, tr.outputState, input.tail, tr.inputSymbol + store)
-                  case None => false
-                }
+        val reachableRuleConfigs = currentLevelConfigs
+          .flatMap { config =>
+            ruleTransitions
+              .filter(tr =>
+                config.store.startsWith(tr.inputStoreSymbols.mkString.reverse) && !finalConfig(config) ||
+                  config.input.isEmpty && finalConfig(config))
+              .map { tr =>
+                Configuration(
+                  config.index + 1,
+                  tr.outputState,
+                  config.input,
+                  updateStoreWithRuleTransition(config.store, tr),
+                  Some(config))
               }
           }
+
+        val reachableTerminalConfigs = currentLevelConfigs
+          .filterNot(config => config.input.isEmpty)
+          .flatMap { config =>
+            terminalTransitions
+              .filter(tr => tr.inputSymbol.value == config.input.head)
+              .map { tr =>
+                Configuration(
+                  config.index + 1,
+                  tr.outputState,
+                  config.input.tail,
+                  tr.inputSymbol + config.store,
+                  Some(config))
+              }
+          }
+        reachableRuleConfigs ++ reachableTerminalConfigs
+      }
+
+
+      if (childConfigs.isEmpty) false
+      else if (currentLevelConfigs.exists(finalConfig)) {
+        currentLevelConfigs.find(finalConfig).foreach(config => config.printParentList(reversed = true))
+        true
+      } else {
+        updateConfiguration(childConfigs -- processedConfigs, processedConfigs ++ currentLevelConfigs)
       }
     }
 
-    if (updateConfiguration(0, startState, input, startStoreSymbol.toString)) {
+    val startConfig = Configuration(0, startState, input, startStoreSymbol.toString, None)
+    if (updateConfiguration(Set(startConfig), Set.empty)) {
       println("SUCCESS! This input string was successfully parsed with state machine")
     } else {
       println("ERROR! This input string cannot be parsed with this state machine")
@@ -85,5 +109,4 @@ object ExtendedAutomaticMemoryMachine {
     new ExtendedAutomaticMemoryMachine(
       states, inputs, storeSet, startState, endStates, startStoreSymbol, ruleTransitions + finalTransition, terminalTransitions)
   }
-
 }
