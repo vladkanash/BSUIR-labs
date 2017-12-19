@@ -10,7 +10,7 @@ import scala.util.parsing.combinator.RegexParsers
 object GrammarParser extends RegexParsers with RuleParser {
 
   val ruleSep = ";"
-  val startSymbolRegexp: Regex = "^[a-zA-Z]$".r
+  val startSymbolRegexp: Regex = ".{1}".r
   val rulesStart = "Rules: "
   val terminalsStart = "Terminals: "
   val nonTerminalsStart = "NonTerminals: "
@@ -19,11 +19,15 @@ object GrammarParser extends RegexParsers with RuleParser {
 
   override val whiteSpace: Regex = """[ \t]+""".r
 
-  def grammar: Parser[Grammar] = (terminals <~ eol) ~ (nonTerminals <~ eol) ~ (rules <~ eol) ~ (startSymbol <~ eol) ^^ {
+  def grammar: Parser[Grammar] =
+    (terminals <~ eol) ~
+    (nonTerminals <~ eol) ~
+    (rules <~ eol) ~
+    (startSymbol <~ eol) ^^ {
     case ((terms ~ nonTerms) ~ rls) ~ start => new Grammar(terms.toSet, nonTerms.toSet + start, rls.toSet, start)
   }
 
-  def rules: Parser[List[Rule]] = rulesStart ~> rule ~ rep(ruleSep ~> rule) <~ opt(ruleSep) ^^
+  def rules: Parser[List[Rule]] = rulesStart ~> (rule <~ ruleSep) ~ rep(rule <~ ruleSep) ^^
     (e => e._1 ::: e._2.flatten)
 
   def startSymbol: Parser[Symbol] = startSymbolStart ~> startSymbolRegexp ^^
