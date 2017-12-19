@@ -6,5 +6,8 @@ case class Symbol(value: Char) {
 }
 
 object Symbol {
+
   implicit def charToSymbol(c: Char): Symbol = Symbol(c)
+
+  val empty: Symbol = 'ε'
 }

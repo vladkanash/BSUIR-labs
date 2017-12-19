@@ -18,12 +18,12 @@ object GrammarFiniteStateMachine {
 
     val stateMachineNewStateNames = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" diff grammar.nonTerminals.mkString
 
-    val additionalNonTerminal: Char = stateMachineNewStateNames head
+    val additionalNonTerminal: Symbol = stateMachineNewStateNames head
 
     val extendedRules: Set[Rule] = grammar.rules ++ grammar.rules
       .filterNot(rule => hasExtendedRule(rule, grammar.rules))
       .filter(_.right.len == 1)
-      .map(rule => Rule(rule.left, rule.right.contents + additionalNonTerminal))
+      .map(rule => Rule(rule.left, rule.right.contents :+ additionalNonTerminal))
 
     val additionalEndState: Set[Symbol] =
       if (grammar.rules.contains(Rule(Set(grammar.startSymbol), EmptyWord)))
