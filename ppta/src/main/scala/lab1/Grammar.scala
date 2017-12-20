@@ -32,7 +32,7 @@ class Grammar(val terminals: Set[Symbol],
 
   private lazy val isRegular = isContextFree && (rules forall (rule =>
     (rule.right.len == 2 && rule.right.hasAnyIn(terminals) && rule.right.hasAnyIn(nonTerminals)) ||
-    (rule.right.len == 1 && rule.right.allIn(terminals ++ nonTerminals))))
+    (rule.right.len == 1 && rule.right.allIn(terminals))))
 
   override def toString: String =
     s"""Terminals: ${terminals.mkString}
