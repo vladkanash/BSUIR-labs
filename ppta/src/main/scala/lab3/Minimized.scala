@@ -30,9 +30,11 @@ trait Minimized extends FiniteStateMachine {
         .toMap
 
     def extendClasses(classes: Set[Set[State]]): Set[Set[State]] = {
-      val newClasses = classes.flatten
+      val newClasses = classes flatMap { stateClass => stateClass
         .groupBy((state: State) => getReachMap(state, classes.toArray))
         .values.toSet
+      }
+
       if (classes == newClasses) newClasses else extendClasses(newClasses)
     }
 
