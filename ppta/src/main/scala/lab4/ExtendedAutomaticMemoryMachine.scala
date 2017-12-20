@@ -62,9 +62,9 @@ class ExtendedAutomaticMemoryMachine (states: Set[State],
         reachableRuleConfigs ++ reachableTerminalConfigs
       }
 
-
-      if (childConfigs.isEmpty) false
-      else if (currentLevelConfigs.exists(finalConfig)) {
+      if (currentLevelConfigs.exists(_.index > searchThreshold)) false else
+      if (childConfigs.isEmpty) false else
+      if (currentLevelConfigs.exists(finalConfig)) {
         currentLevelConfigs.find(finalConfig).foreach(config => config.printParentList(reversed = true))
         true
       } else {

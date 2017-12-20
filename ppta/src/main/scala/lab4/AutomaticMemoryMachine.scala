@@ -14,6 +14,8 @@ class AutomaticMemoryMachine(val states: Set[State],
                              val ruleTransitions: Set[StoreTransition],
                              val terminalTransitions: Set[StoreTransition]) {
 
+  val searchThreshold = 20
+
   val transitions: Set[StoreTransition] = ruleTransitions ++ terminalTransitions
 
   def parse(input: String): Unit = {
@@ -65,9 +67,9 @@ class AutomaticMemoryMachine(val states: Set[State],
 
 //      currentLevelConfigs foreach println
 
-      if (childConfigs.isEmpty) {
-        false
-      } else if (currentLevelConfigs.exists(finalConfig)) {
+      if (currentLevelConfigs.exists(_.index > searchThreshold)) false else
+      if (childConfigs.isEmpty) false else
+      if (currentLevelConfigs.exists(finalConfig)) {
         currentLevelConfigs.find(finalConfig).foreach(config => config.printParentList())
         true
       } else
