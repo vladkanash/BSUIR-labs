@@ -14,10 +14,7 @@ case class Configuration(index: Integer, state: State, input: String, store: Str
 
   def printParentList(reversed: Boolean = false): Unit = {
     println(Configuration.header)
-    if (reversed)
-      collectParent(List(this)) foreach(conf => println(conf.reversedString(true)))
-    else
-      collectParent(List(this)) foreach println
+    collectParent(List(this)) foreach (conf => println(conf.reversedString(reversed)))
   }
 
   private def collectParent(collected: List[Configuration]): List[Configuration] = parent match {

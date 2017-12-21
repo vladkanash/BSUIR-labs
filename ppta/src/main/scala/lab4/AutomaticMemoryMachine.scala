@@ -14,7 +14,7 @@ class AutomaticMemoryMachine(val states: Set[State],
                              val ruleTransitions: Set[StoreTransition],
                              val terminalTransitions: Set[StoreTransition]) {
 
-  val searchThreshold = 20
+  val searchThreshold = 40
 
   val transitions: Set[StoreTransition] = ruleTransitions ++ terminalTransitions
 
@@ -33,33 +33,25 @@ class AutomaticMemoryMachine(val states: Set[State],
       val childConfigs: Set[Configuration] = {
 
         val reachableRuleConfigs = currentLevelConfigs
-          .flatMap { config =>
-            ruleTransitions
-              .filter(tr => config.store.head == tr.inputStoreSymbols.mkString.head)
-              .map { tr =>
-                Configuration(
-                  config.index + 1,
-                  tr.outputState,
-                  config.input,
-                  updateStoreWithRuleTransition(config.store, tr),
-                  Some(config))
-              }
+          .flatMap { config => ruleTransitions
+            .filter(tr => config.store.head == tr.inputStoreSymbols.mkString.head)
+            .map { tr =>
+
+              Configuration(config.index + 1, tr.outputState, config.input,
+                updateStoreWithRuleTransition(config.store, tr), Some(config))
+            }
           }
 
         val reachableTerminalConfigs = currentLevelConfigs
           .filterNot(config => config.input.isEmpty || config.store.isEmpty)
           .filter(config => config.input.head == config.store.head)
-          .flatMap { config =>
-            terminalTransitions
-              .filter(tr => tr.inputSymbol.value == config.store.head)
-              .map { tr =>
-                Configuration(
-                  config.index + 1,
-                  tr.outputState,
-                  config.inputTail,
-                  config.storeTail,
-                  Some(config))
-              }
+          .flatMap { config =>terminalTransitions
+            .filter(tr => tr.inputSymbol.value == config.store.head)
+            .map { tr =>
+
+              Configuration(config.index + 1, tr.outputState, config.inputTail,
+                config.storeTail, Some(config))
+            }
           }
 
         reachableRuleConfigs ++ reachableTerminalConfigs
@@ -69,11 +61,10 @@ class AutomaticMemoryMachine(val states: Set[State],
 
       if (currentLevelConfigs.exists(_.index > searchThreshold)) false else
       if (childConfigs.isEmpty) false else
-      if (currentLevelConfigs.exists(finalConfig)) {
-        currentLevelConfigs.find(finalConfig).foreach(config => config.printParentList())
-        true
-      } else
-        updateConfiguration(childConfigs -- processedConfigs, processedConfigs ++ currentLevelConfigs)
+        currentLevelConfigs.find(finalConfig) match {
+          case Some(finalConfig) => finalConfig.printParentList(); true
+          case None => updateConfiguration(childConfigs -- processedConfigs, processedConfigs ++ currentLevelConfigs)
+        }
     }
 
     val startConfig = Configuration(0, startState, input, startStoreSymbol.toString, None)

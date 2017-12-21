@@ -27,49 +27,41 @@ class ExtendedAutomaticMemoryMachine (states: Set[State],
       def finalConfig(config: Configuration) =
         (endStates contains config.state) && config.input.isEmpty
 
+      def isRuleReachable(tr: StoreTransition, config: Configuration) =
+        config.store.startsWith(tr.inputStoreSymbols.mkString.reverse) && !finalConfig(config) ||
+        config.input.isEmpty && finalConfig(config)
+
       val childConfigs: Set[Configuration] = {
 
         val reachableRuleConfigs = currentLevelConfigs
-          .flatMap { config =>
-            ruleTransitions
-              .filter(tr =>
-                config.store.startsWith(tr.inputStoreSymbols.mkString.reverse) && !finalConfig(config) ||
-                  config.input.isEmpty && finalConfig(config))
-              .map { tr =>
-                Configuration(
-                  config.index + 1,
-                  tr.outputState,
-                  config.input,
-                  updateStoreWithRuleTransition(config.store, tr),
-                  Some(config))
-              }
+          .flatMap { config => ruleTransitions
+            .filter(tr => isRuleReachable(tr, config))
+            .map { tr =>
+
+              Configuration(config.index + 1, tr.outputState, config.input,
+                updateStoreWithRuleTransition(config.store, tr), Some(config))
+            }
           }
 
         val reachableTerminalConfigs = currentLevelConfigs
           .filterNot(config => config.input.isEmpty)
-          .flatMap { config =>
-            terminalTransitions
-              .filter(tr => tr.inputSymbol.value == config.input.head)
-              .map { tr =>
-                Configuration(
-                  config.index + 1,
-                  tr.outputState,
-                  config.input.tail,
-                  tr.inputSymbol + config.store,
-                  Some(config))
-              }
+          .flatMap { config => terminalTransitions
+            .filter(tr => tr.inputSymbol.value == config.input.head)
+            .map { tr =>
+
+              Configuration(config.index + 1, tr.outputState, config.input.tail,
+                tr.inputSymbol + config.store, Some(config))
+            }
           }
         reachableRuleConfigs ++ reachableTerminalConfigs
       }
 
       if (currentLevelConfigs.exists(_.index > searchThreshold)) false else
       if (childConfigs.isEmpty) false else
-      if (currentLevelConfigs.exists(finalConfig)) {
-        currentLevelConfigs.find(finalConfig).foreach(config => config.printParentList(reversed = true))
-        true
-      } else {
-        updateConfiguration(childConfigs -- processedConfigs, processedConfigs ++ currentLevelConfigs)
-      }
+        currentLevelConfigs.find(finalConfig) match {
+          case Some(finalConfig) => finalConfig.printParentList(reversed = true); true
+          case None => updateConfiguration(childConfigs -- processedConfigs, processedConfigs ++ currentLevelConfigs)
+        }
     }
 
     val startConfig = Configuration(0, startState, input, startStoreSymbol.toString, None)
