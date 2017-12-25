@@ -1,0 +1,9 @@
+Terminals: abcdefgh
+NonTerminals: ABCDEFG
+StartSymbol: S
+Rules: S => aB|aA;
+       B => bB|a;
+       A => aA|b;
+       EF => a|aZaa;
+       F => S;
+       S => S;

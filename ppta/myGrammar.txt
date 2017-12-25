@@ -1,4 +1,0 @@
-Terminals: ab+-T
-NonTerminals: KLMN
-Rules: K => aL|bM; L => -N|-M; M => +N; N => aL|bM|T;
-StartSymbol: K

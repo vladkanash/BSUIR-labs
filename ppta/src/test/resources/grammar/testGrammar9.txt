@@ -1,0 +1,4 @@
+Terminals: a()+-
+NonTerminals: SA
+StartSymbol: S
+Rules: aS => S+S|Aa|S-S; A => (S)|a;
