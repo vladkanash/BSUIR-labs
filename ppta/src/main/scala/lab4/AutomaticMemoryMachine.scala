@@ -18,7 +18,7 @@ class AutomaticMemoryMachine(val states: Set[State],
 
   val transitions: Set[StoreTransition] = ruleTransitions ++ terminalTransitions
 
-  def parse(input: String): Boolean = {
+  def parse(input: String, verbose: Boolean = false): Boolean = {
 
     def updateConfiguration(currentLevelConfigs: Set[Configuration], processedConfigs: Set[Configuration]): Boolean = {
 
@@ -62,7 +62,7 @@ class AutomaticMemoryMachine(val states: Set[State],
       if (currentLevelConfigs.exists(_.index > searchThreshold)) false else
       if (childConfigs.isEmpty) false else
         currentLevelConfigs.find(finalConfig) match {
-          case Some(finalConfig) => finalConfig.printParentList(); true
+          case Some(finalConfig) => if (verbose) finalConfig.printParentList(); true
           case None => updateConfiguration(childConfigs -- processedConfigs, processedConfigs ++ currentLevelConfigs)
         }
     }

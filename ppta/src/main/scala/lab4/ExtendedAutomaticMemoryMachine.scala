@@ -17,7 +17,7 @@ class ExtendedAutomaticMemoryMachine (states: Set[State],
   extends AutomaticMemoryMachine(states, inputs, storeSet, startState,
     endStates, startStoreSymbol, ruleTransitions, terminalTransitions) {
 
-  override def parse(input: String): Boolean = {
+  override def parse(input: String, verbose: Boolean = false): Boolean = {
 
     def updateConfiguration(currentLevelConfigs: Set[Configuration], processedConfigs: Set[Configuration]): Boolean = {
 
@@ -59,7 +59,7 @@ class ExtendedAutomaticMemoryMachine (states: Set[State],
       if (currentLevelConfigs.exists(_.index > searchThreshold)) false else
       if (childConfigs.isEmpty) false else
         currentLevelConfigs.find(finalConfig) match {
-          case Some(finalConfig) => finalConfig.printParentList(reversed = true); true
+          case Some(finalConfig) => if (verbose) finalConfig.printParentList(reversed = true); true
           case None => updateConfiguration(childConfigs -- processedConfigs, processedConfigs ++ currentLevelConfigs)
         }
     }
