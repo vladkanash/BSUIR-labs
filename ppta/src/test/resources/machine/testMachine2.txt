@@ -1,0 +1,21 @@
+States: ABCDEFGHIJ
+Start state: A
+End states: I
+Input symbols: abcd~&┴
+Transitions:
+    A(c) => C;
+    B(d) => C;
+    C(a) => E;
+    C(b) => G;
+    C(c) => F;
+    D(d) => C;
+    E(~) => B;
+    E(┴) => IX;
+    F(&) => C;
+    F(┴) => I;
+    G(~) => D;
+    G(┴) => I;
+    H(a) => I;
+    H(b) => E;
+    J(a) => G;
+    J(b) => I;

@@ -1,0 +1,8 @@
+Terminals: abpgy
+NonTerminals: SRTXY
+StartSymbol: S
+Rules:  S => R|T;
+        R => pX|paR|paT;
+        T => Tg|g;
+        X => aXb;
+        Y => aYa|y;
