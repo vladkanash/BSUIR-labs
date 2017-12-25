@@ -1,6 +1,6 @@
 package parser.grammar
 
-import java.io.FileReader
+import java.io.Reader
 
 import lab1.{Grammar, Rule, Symbol}
 
@@ -19,27 +19,28 @@ object GrammarParser extends RegexParsers with RuleParser {
 
   override val whiteSpace: Regex = """[ \t]+""".r
 
-  def grammar: Parser[Grammar] =
+  private def grammar: Parser[Grammar] =
     (terminals <~ eol) ~
     (nonTerminals <~ eol) ~
-    (rules <~ eol) ~
-    (startSymbol <~ eol) ^^ {
-    case ((terms ~ nonTerms) ~ rls) ~ start => new Grammar(terms.toSet, nonTerms.toSet + start, rls.toSet, start)
+    (startSymbol <~ eol) ~
+    (rules <~ eol)  ^^ {
+    case ((terms ~ nonTerms) ~ start) ~ rls => new Grammar(terms.toSet, nonTerms.toSet + start, rls.toSet, start)
   }
 
-  def rules: Parser[List[Rule]] = rulesStart ~> (rule <~ ruleSep) ~ rep(rule <~ ruleSep) ^^
-    (e => e._1 ::: e._2.flatten)
+  private def rules: Parser[List[Rule]] = rulesStart ~> opt(eol) ~> rule ~ rep(ruleSep ~> opt(eol) ~> rule) <~ opt(ruleSep) ^^ {
+    case rule ~ rules => rule ::: rules.flatten
+  }
 
-  def startSymbol: Parser[Symbol] = startSymbolStart ~> startSymbolRegexp ^^
+  private def startSymbol: Parser[Symbol] = startSymbolStart ~> startSymbolRegexp ^^
     (res => Symbol(res.charAt(0)))
 
-  def terminals: Parser[List[Symbol]] = terminalsStart ~> seq
+  private def terminals: Parser[List[Symbol]] = terminalsStart ~> seq
 
-  def nonTerminals: Parser[List[Symbol]] = nonTerminalsStart ~> seq
+  private def nonTerminals: Parser[List[Symbol]] = nonTerminalsStart ~> seq
 
-  def seq: Parser[List[Symbol]] = nonEmptyWord ^^ (_.toList.map(Symbol(_)))
+  private def seq: Parser[List[Symbol]] = nonEmptyWord ^^ (_.toList.map(Symbol(_)))
 
-  def parse(reader: FileReader): Option[Grammar] = parseAll(grammar, reader) match {
+  def parse(reader: Reader): Option[Grammar] = parseAll(grammar, reader) match {
     case Success(result, _) => Some(result)
     case NoSuccess(msg, _) => println(msg); None
   }
