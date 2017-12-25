@@ -1,9 +1,8 @@
 package lab1
 
-import org.scalatest.FlatSpec
-import util.GrammarUtils
+import spec.GrammarSpec
 
-class GrammarTest extends FlatSpec with GrammarUtils {
+class GrammarTest extends GrammarSpec {
 
   "A grammar" should "not be crated when rules contain invalid symbols" in {
     assertThrows[IllegalArgumentException] {

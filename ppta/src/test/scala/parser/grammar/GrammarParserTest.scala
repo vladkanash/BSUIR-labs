@@ -1,9 +1,8 @@
 package parser.grammar
 
-import org.scalatest.FlatSpec
-import util.GrammarUtils
+import spec.GrammarSpec
 
-class GrammarParserTest extends FlatSpec with GrammarUtils {
+class GrammarParserTest extends GrammarSpec {
 
   "A grammar parser" should "parse correct grammar from file" in {
     val result = parseFromFile("grammar/testGrammar1.txt")
