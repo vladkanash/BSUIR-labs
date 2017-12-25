@@ -17,7 +17,7 @@ class ExtendedAutomaticMemoryMachine (states: Set[State],
   extends AutomaticMemoryMachine(states, inputs, storeSet, startState,
     endStates, startStoreSymbol, ruleTransitions, terminalTransitions) {
 
-  override def parse(input: String): Unit = {
+  override def parse(input: String): Boolean = {
 
     def updateConfiguration(currentLevelConfigs: Set[Configuration], processedConfigs: Set[Configuration]): Boolean = {
 
@@ -65,11 +65,7 @@ class ExtendedAutomaticMemoryMachine (states: Set[State],
     }
 
     val startConfig = Configuration(0, startState, input, startStoreSymbol.toString, None)
-    if (updateConfiguration(Set(startConfig), Set.empty)) {
-      println("SUCCESS! This input string was successfully parsed with state machine")
-    } else {
-      println("ERROR! This input string cannot be parsed with this state machine")
-    }
+    updateConfiguration(Set(startConfig), Set.empty)
   }
 }
 

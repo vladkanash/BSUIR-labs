@@ -1,6 +1,6 @@
 package parser.statemachine
 
-import java.io.FileReader
+import java.io.Reader
 
 import lab1.Symbol
 import lab2.{State, StateMachineParams, Transition}
@@ -23,7 +23,7 @@ object StateMachineParser extends RegexParsers with TransitionParser {
 
   override val whiteSpace: Regex = """[ \t]+""".r
 
-  def stateMachine: Parser[StateMachineParams] =
+  private def stateMachine: Parser[StateMachineParams] =
     (states <~ eol) ~
     (startState <~ eol) ~
     (endStates <~ eol) ~
@@ -34,19 +34,19 @@ object StateMachineParser extends RegexParsers with TransitionParser {
       StateMachineParams(states, startState, endStates, symbols, transitions)
   }
 
-  def states: Parser[Set[State]] = statesStart ~> symbolsSeq ^^ (_.toSet.map(State(_)))
+  private def states: Parser[Set[State]] = statesStart ~> symbolsSeq ^^ (_.toSet.map(State(_)))
 
-  def startState: Parser[State] = startStateStart ~> nonEmptySymbol ^^ (res => State(res.charAt(0)))
+  private def startState: Parser[State] = startStateStart ~> nonEmptySymbol ^^ (res => State(res.charAt(0)))
 
-  def endStates: Parser[Set[State]] = endStatesStart ~> symbolsSeq ^^ (_.toSet.map(State(_)))
+  private def endStates: Parser[Set[State]] = endStatesStart ~> symbolsSeq ^^ (_.toSet.map(State(_)))
 
-  def symbols: Parser[Set[Symbol]] = symbolsStart ~> symbolsSeq ^^ (_.toSet.map(Symbol(_)))
+  private def symbols: Parser[Set[Symbol]] = symbolsStart ~> symbolsSeq ^^ (_.toSet.map(Symbol(_)))
 
-  def transitions: Parser[Set[Transition]] =
+  private def transitions: Parser[Set[Transition]] =
     transitionStart ~> opt(eol) ~> transition ~ rep(transitionSep ~> opt(eol) ~> transition) <~ opt(transitionSep) ^^
     (res => res._1 :: res._2 toSet)
 
-  def parse(reader: FileReader): Option[StateMachineParams] = parseAll(stateMachine, reader) match {
+  def parse(reader: Reader): Option[StateMachineParams] = parseAll(stateMachine, reader) match {
     case Success(result, _) => Some(result)
     case NoSuccess(msg, _) => println(msg); None
   }

@@ -13,12 +13,12 @@ trait TransitionParser extends RegexParsers {
   val rightParenthesis = ")"
   val nonEmptySymbol: Regex = ".{1}".r
 
-  def transition: Parser[Transition] = (state ~ symbol <~ arrow) ~ state ^^ {
+  protected def transition: Parser[Transition] = (state ~ symbol <~ arrow) ~ state ^^ {
     case ((input ~ symbol) ~ output) => Transition(input, symbol, output)
   }
 
-  def symbol: Parser[Symbol] = leftParenthesis ~> nonEmptySymbol <~ rightParenthesis ^^ (res => Symbol(res.charAt(0)))
-  def state: Parser[State] = nonEmptySymbol ^^ (res => State(res.charAt(0)))
+  private def symbol: Parser[Symbol] = leftParenthesis ~> nonEmptySymbol <~ rightParenthesis ^^ (res => Symbol(res.charAt(0)))
+  private def state: Parser[State] = nonEmptySymbol ^^ (res => State(res.charAt(0)))
 
   def parse(str: CharSequence): Option[Transition] = parseAll(transition, str) match {
     case Success(result, _) => Some(result)
