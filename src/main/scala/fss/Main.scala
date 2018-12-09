@@ -3,7 +3,7 @@ package fss
 import fss.entity.Config
 import fss.plot.PlotTools
 import scalax.chart.api
-import scalax.chart.api.{XYSeries, XYSeriesCollection}
+import scalax.chart.api.{XYSeries, XYLineChart, XYSeriesCollection}
 
 object Main extends App {
 
