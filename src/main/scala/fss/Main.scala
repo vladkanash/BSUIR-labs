@@ -1,8 +1,9 @@
-import fss.FSS
+package fss
+
 import fss.entity.Config
-import plot.PlotTools
+import fss.plot.PlotTools
 import scalax.chart.api
-import scalax.chart.api._
+import scalax.chart.api.{XYSeries, XYSeriesCollection}
 
 object Main extends App {
 

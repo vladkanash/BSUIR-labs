@@ -1,4 +1,4 @@
-package plot
+package fss.plot
 
 import org.jfree.data.xy.XYSeries
 
