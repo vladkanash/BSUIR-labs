@@ -1,5 +1,5 @@
-# BSUIR-master-course
-Labs docs and sources for BSUIR master degree course
+# BSUIR-labs
+Sources for BSUIR bachelor and master degree course labs
 
 - `/swarm-intelligence` - Swarm Intellijence master cource labs (Scala)
 - `/data-storage-and-management` - Data Storage and Management master course labs (R)
